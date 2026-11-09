@@ -42,43 +42,109 @@ public class MoriEngine {
             return .passThrough
         }
 
-        // Punctuation, Whitespace, Newlines -> commit & pass through
-        if char.isWhitespace || char.isNewline || char.isPunctuation || char.isMathSymbol {
+        // Space and Newlines always commit & reset buffer
+        if char.isWhitespace || char.isNewline {
             reset()
             return .passThrough
         }
 
-        // Only process alphabetic characters or characters relevant to typing
-        guard char.isLetter else {
-            reset()
-            return .passThrough
-        }
+        switch inputMethod {
+        case .telex, .simpleTelex:
+            // In Telex, brackets [ and ] can be shortcuts for ơ and ư
+            let isTelexKey = char.isLetter || char == "[" || char == "]" || char == "{" || char == "}"
+            if !isTelexKey {
+                reset()
+                return .passThrough
+            }
 
-        // Try 1: Diacritic transformation (aa -> â, ee -> ê, dd -> đ, aw -> ă, etc.)
-        if let transformed = DiacriticTransform.tryTransformVowel(
-            word: currentWord,
-            char: char,
-            inputMethod: inputMethod
-        ) {
-            let deleteCount = currentWord.count
-            currentWord = transformed
-            return .replace(deleteCount: deleteCount, text: transformed)
-        }
+            // 1. Try diacritics (aa -> â, aw -> ă, dd -> đ, [ -> ơ, etc.)
+            if let transformed = DiacriticTransform.tryTransformVowel(
+                word: currentWord,
+                char: char,
+                inputMethod: inputMethod
+            ) {
+                let deleteCount = currentWord.count
+                currentWord = transformed
+                return .replace(deleteCount: deleteCount, text: transformed)
+            }
 
-        // Try 2: Tone transformation (s, f, r, x, j, z)
-        if let transformed = DiacriticTransform.tryApplyTone(
-            word: currentWord,
-            char: char,
-            toneStyle: toneStyle
-        ) {
-            let deleteCount = currentWord.count
-            currentWord = transformed
-            return .replace(deleteCount: deleteCount, text: transformed)
-        }
+            // 2. Try tones (s, f, r, x, j, z)
+            if let transformed = DiacriticTransform.tryApplyTone(
+                word: currentWord,
+                char: char,
+                toneStyle: toneStyle
+            ) {
+                let deleteCount = currentWord.count
+                currentWord = transformed
+                return .replace(deleteCount: deleteCount, text: transformed)
+            }
 
-        // Normal letter typing: append to buffer and let system display it
-        currentWord.append(char)
-        return .passThrough
+            // Normal letter
+            if char.isLetter {
+                currentWord.append(char)
+                return .passThrough
+            } else {
+                reset()
+                return .passThrough
+            }
+
+        case .vni:
+            // In VNI, letters and numbers (0-9) are valid
+            if char.isNumber {
+                if let transformed = VNITransform.tryTransformVNI(
+                    word: currentWord,
+                    char: char,
+                    toneStyle: toneStyle
+                ) {
+                    let deleteCount = currentWord.count
+                    currentWord = transformed
+                    return .replace(deleteCount: deleteCount, text: transformed)
+                } else {
+                    // A number that doesn't transform: commits word
+                    reset()
+                    return .passThrough
+                }
+            } else if char.isLetter {
+                currentWord.append(char)
+                return .passThrough
+            } else {
+                reset()
+                return .passThrough
+            }
+
+        case .viqr:
+            // In VIQR: letters and special keys (' ` ? ~ . ^ + * ( - 0)
+            let viqrSpecialKeys: Set<Character> = ["'", "`", "?", "~", ".", "^", "+", "*", "(", "-", "0"]
+            if viqrSpecialKeys.contains(char) {
+                if let transformed = VIQRTransform.tryTransformVIQR(
+                    word: currentWord,
+                    char: char,
+                    toneStyle: toneStyle
+                ) {
+                    let deleteCount = currentWord.count
+                    currentWord = transformed
+                    return .replace(deleteCount: deleteCount, text: transformed)
+                } else {
+                    reset()
+                    return .passThrough
+                }
+            } else if char.isLetter {
+                // Also check if dd -> đ in VIQR
+                if let transformed = VIQRTransform.tryTransformVIQR(
+                    word: currentWord,
+                    char: char,
+                    toneStyle: toneStyle
+                ) {
+                    let deleteCount = currentWord.count
+                    currentWord = transformed
+                    return .replace(deleteCount: deleteCount, text: transformed)
+                }
+                currentWord.append(char)
+                return .passThrough
+            } else {
+                reset()
+                return .passThrough
+            }
+        }
     }
 }
-

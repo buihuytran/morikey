@@ -9,11 +9,12 @@ MoriKey chạy trực tiếp trên thanh menu bar (Status Bar) bằng cơ chế 
 ## ✨ Tính năng nổi bật
 
 - ⚡️ **Native & Siêu nhẹ**: Viết thuần Swift 5.9+ / Swift 6, không dùng webview hay runtime cồng kềnh, tiêu tốn rất ít RAM và CPU.
-- ⌨️ **Hỗ trợ kiểu gõ Telex & Simple Telex**:
-  - `aa` -> `â`, `aw` -> `ă`, `ee` -> `ê`, `oo` -> `ô`, `ow` -> `ơ`, `uw` -> `ư`, `uow` -> `ươ`, `dd` -> `đ`.
-  - Phím dấu: `s` (sắc), `f` (huyền), `r` (hỏi), `x` (ngã), `j` (nặng), `z` (xóa dấu).
-  - Khôi phục phím khi gõ đúp (ví dụ: `cas` + `s` -> `cas`, `aa` + `a` -> `aaa`).
-  - **Simple Telex**: Giữ nguyên `w` ở đầu từ tiếng Anh (ví dụ: `web`, `win`) tránh bị biến thành `ư`.
+- ⌨️ **Hỗ trợ đầy đủ 4 kiểu gõ phổ biến nhất**:
+  - **Telex**: Kiểu gõ phổ thông nhất (`aa` -> `â`, `aw` -> `ă`, `ee` -> `ê`, `oo` -> `ô`, `ow` -> `ơ`, `uw` -> `ư`, `uow` -> `ươ`, `dd` -> `đ`, `s/f/r/x/j/z`). Hỗ trợ gõ nhanh ngoặc vuông: `[` -> `ơ`, `]` -> `ư`.
+  - **Simple Telex**: Giữ nguyên `w` ở đầu từ tiếng Anh (ví dụ: `web`, `win`, `wifi`), giảm thiểu gõ nhầm.
+  - **VNI**: Kiểu gõ theo số (`1`: sắc, `2`: huyền, `3`: hỏi, `4`: ngã, `5`: nặng, `6`: â/ê/ô, `7`: ơ/ư, `8`: ă, `9`: đ, `0`: xóa dấu). Gõ đúp số để khôi phục số (`a11` -> `a1`).
+  - **VIQR**: Kiểu gõ theo ký tự quy chuẩn (`'`: sắc, `` ` ``: huyền, `?`: hỏi, `~`: ngã, `.`: nặng, `^`: mũ, `+`: móc, `(`: trăng, `d-`: đ).
+- ⌨️ **Phím tắt toàn hệ thống**: Nhấn **`⌃ Space` (Control + Space)** để chuyển đổi tức thì giữa Tiếng Việt `[V]` và Tiếng Anh `[E]` mà không cần dùng chuột!
 - 🎯 **Quy tắc dấu linh hoạt**:
   - **Kiểu mới**: `hòa`, `thúy`, `khỏe`
   - **Kiểu cũ**: `hoà`, `thuý`, `khoẻ`
@@ -113,3 +114,4 @@ Dự án được thiết kế theo module rất dễ mở rộng:
 - **Thêm kiểu gõ VNI**: Thêm logic map phím số `1..9` vào thư mục `MoriKeyEngine/Transformer/`.
 - **Bảng gõ tắt (Macro / Shortcuts)**: Thêm Dictionary lưu trữ từ viết tắt trong `MoriEngine`.
 - **Tự động khôi phục từ tiếng Anh (Spelling check)**: Kiểm tra các tiền tố/hậu tố không tồn tại trong tiếng Việt để tự động phục hồi chữ tiếng Anh.
+

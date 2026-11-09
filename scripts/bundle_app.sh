@@ -33,3 +33,4 @@ echo "🔏 Ad-hoc signing MoriKey.app..."
 codesign --force --deep --sign - "$APP_DIR"
 
 echo "✅ MoriKey.app successfully created at $APP_DIR"
+

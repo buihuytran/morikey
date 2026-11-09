@@ -14,6 +14,12 @@ public struct DiacriticTransform {
             if lowerChar == "w" && inputMethod == .telex {
                 return isUpper ? "Ư" : "ư"
             }
+            if inputMethod == .telex || inputMethod == .simpleTelex {
+                if char == "[" { return "ơ" }
+                if char == "]" { return "ư" }
+                if char == "{" { return "Ơ" }
+                if char == "}" { return "Ư" }
+            }
             return nil
         }
 
@@ -158,6 +164,39 @@ public struct DiacriticTransform {
             } else if inputMethod == .telex {
                 // Standalone or after a consonant (e.g. "tw" -> "tư")
                 chars.append(isUpper ? "Ư" : "ư")
+                return String(chars)
+            }
+        }
+
+        // 4. Bracket shortcuts in Telex: [ -> ơ, ] -> ư, { -> Ơ, } -> Ư
+        if inputMethod == .telex || inputMethod == .simpleTelex {
+            if char == "[" {
+                if lastChar == "ơ" {
+                    chars[lastIdx] = "["
+                    return String(chars)
+                }
+                chars.append("ơ")
+                return String(chars)
+            } else if char == "]" {
+                if lastChar == "ư" {
+                    chars[lastIdx] = "]"
+                    return String(chars)
+                }
+                chars.append("ư")
+                return String(chars)
+            } else if char == "{" {
+                if lastChar == "Ơ" {
+                    chars[lastIdx] = "{"
+                    return String(chars)
+                }
+                chars.append("Ơ")
+                return String(chars)
+            } else if char == "}" {
+                if lastChar == "Ư" {
+                    chars[lastIdx] = "}"
+                    return String(chars)
+                }
+                chars.append("Ư")
                 return String(chars)
             }
         }

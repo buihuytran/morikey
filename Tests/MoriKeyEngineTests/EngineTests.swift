@@ -87,7 +87,69 @@ final class EngineTests: XCTestCase {
         XCTAssertEqual(type("uw"), "ư")
     }
 
+    func testTelexBrackets() {
+        engine.inputMethod = .telex
+        XCTAssertEqual(type("["), "ơ")
+        XCTAssertEqual(type("]"), "ư")
+    }
+
+    func testVNIInputMethod() {
+        engine.inputMethod = .vni
+        engine.toneStyle = .modern
+
+        // Numbers for tones: 1 (sắc), 2 (huyền), 3 (hỏi), 4 (ngã), 5 (nặng), 0 (xóa)
+        XCTAssertEqual(type("a1"), "á")
+        XCTAssertEqual(type("a2"), "à")
+        XCTAssertEqual(type("a3"), "ả")
+        XCTAssertEqual(type("a4"), "ã")
+        XCTAssertEqual(type("a5"), "ạ")
+        XCTAssertEqual(type("a10"), "a")
+
+        // Numbers for diacritics: 6 (mũ), 7 (móc), 8 (trăng), 9 (đ)
+        XCTAssertEqual(type("a6"), "â")
+        XCTAssertEqual(type("e6"), "ê")
+        XCTAssertEqual(type("o6"), "ô")
+        XCTAssertEqual(type("a8"), "ă")
+        XCTAssertEqual(type("o7"), "ơ")
+        XCTAssertEqual(type("u7"), "ư")
+        XCTAssertEqual(type("u7o7"), "ươ")
+        XCTAssertEqual(type("d9"), "đ")
+
+        // Full words in VNI
+        XCTAssertEqual(type("vie6t5"), "việt")
+        XCTAssertEqual(type("tie6ng1"), "tiếng")
+        XCTAssertEqual(type("d9u7o7ng2"), "đường")
+        XCTAssertEqual(type("hoa2"), "hòa")
+    }
+
+    func testVIQRInputMethod() {
+        engine.inputMethod = .viqr
+        engine.toneStyle = .modern
+
+        // Diacritics: ^ (mũ), + (móc), ( (trăng), - (đ)
+        XCTAssertEqual(type("a^"), "â")
+        XCTAssertEqual(type("e^"), "ê")
+        XCTAssertEqual(type("o^"), "ô")
+        XCTAssertEqual(type("a("), "ă")
+        XCTAssertEqual(type("u+"), "ư")
+        XCTAssertEqual(type("o+"), "ơ")
+        XCTAssertEqual(type("d-"), "đ")
+
+        // Tones: ' (sắc), ` (huyền), ? (hỏi), ~ (ngã), . (nặng)
+        XCTAssertEqual(type("a'"), "á")
+        XCTAssertEqual(type("a`"), "à")
+        XCTAssertEqual(type("a?"), "ả")
+        XCTAssertEqual(type("a~"), "ã")
+        XCTAssertEqual(type("a."), "ạ")
+
+        // Full words in VIQR
+        XCTAssertEqual(type("vie^.t"), "việt")
+        XCTAssertEqual(type("hoa`"), "hòa")
+        XCTAssertEqual(type("d-u+o+ng`"), "đường")
+    }
+
     func testBackspace() {
+        engine.inputMethod = .telex
         engine.reset()
         _ = engine.process(char: "v")
         _ = engine.process(char: "i")
@@ -97,4 +159,3 @@ final class EngineTests: XCTestCase {
         XCTAssertEqual(engine.currentWord, "vi")
     }
 }
-

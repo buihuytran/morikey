@@ -90,13 +90,21 @@ public final class KeyboardInterceptor {
         }
 
         let flags = event.flags
+        let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
+
+        // Hotkey: Control + Space -> Toggle Vietnamese / English
+        if flags.contains(.maskControl) && keyCode == 0x31 {
+            DispatchQueue.main.async {
+                AppSettings.shared.toggleVietnamese()
+            }
+            return nil
+        }
+
         // If Cmd, Ctrl, or Option is pressed, pass through & reset buffer
         if flags.contains(.maskCommand) || flags.contains(.maskControl) || flags.contains(.maskAlternate) {
             MoriEngineManager.shared.engine.reset()
             return Unmanaged.passRetained(event)
         }
-
-        let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
 
         // Backspace / Delete
         if keyCode == 0x33 {

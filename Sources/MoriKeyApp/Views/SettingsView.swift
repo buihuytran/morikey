@@ -19,6 +19,17 @@ struct SettingsView: View {
                 }
 
                 HStack {
+                    Text("Phím tắt chuyển Việt / Anh")
+                    Spacer()
+                    Text("⌃ Space (Control + Khoảng trắng)")
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
+                        .background(Color.secondary.opacity(0.15))
+                        .cornerRadius(6)
+                        .font(.callout.monospaced())
+                }
+
+                HStack {
                     Text("Quyền Trợ năng (Accessibility)")
                     Spacer()
                     if hasAccessibility {
@@ -42,10 +53,12 @@ struct SettingsView: View {
             Section(header: Text("Kiểu gõ")) {
                 Picker("Kiểu gõ:", selection: $settings.inputMethod) {
                     ForEach(InputMethod.allCases) { method in
-                        Text(method.rawValue).tag(method)
+                        VStack(alignment: .leading) {
+                            Text(method.rawValue)
+                        }.tag(method)
                     }
                 }
-                .pickerStyle(.segmented)
+                .pickerStyle(.radioGroup)
 
                 Text(settings.inputMethod.description)
                     .font(.caption)

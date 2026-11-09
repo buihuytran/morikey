@@ -9,29 +9,72 @@ public class MoriEngine {
     public var inputMethod: InputMethod
     public var toneStyle: ToneStyle
     public var isEnabled: Bool
+    public var isSpellingCheckEnabled: Bool
+    public var macroEngine: MacroEngine
 
-    /// Currently accumulated word buffer (as displayed on screen)
+    /// Currently accumulated transformed word buffer (as displayed on screen)
     public private(set) var currentWord: String = ""
+    /// Raw un-transformed sequence of keystrokes (used for spelling restoration)
+    public private(set) var rawWord: String = ""
 
     public init(
         inputMethod: InputMethod = .telex,
         toneStyle: ToneStyle = .modern,
-        isEnabled: Bool = true
+        isEnabled: Bool = true,
+        isSpellingCheckEnabled: Bool = true,
+        macroEngine: MacroEngine = MacroEngine()
     ) {
         self.inputMethod = inputMethod
         self.toneStyle = toneStyle
         self.isEnabled = isEnabled
+        self.isSpellingCheckEnabled = isSpellingCheckEnabled
+        self.macroEngine = macroEngine
     }
 
-    /// Resets the internal word buffer (e.g. on mouse click, arrow keys, focus change)
+    /// Resets the internal word buffer
     public func reset() {
         currentWord = ""
+        rawWord = ""
     }
 
     /// Handles a backspace keystroke
     public func handleBackspace() {
         if !currentWord.isEmpty {
             currentWord.removeLast()
+        }
+        if !rawWord.isEmpty {
+            rawWord.removeLast()
+        }
+    }
+
+    /// Checks if a character is a delimiter (space, enter, punctuation that ends a word)
+    private func isDelimiter(_ char: Character) -> Bool {
+        if char.isWhitespace || char.isNewline {
+            return true
+        }
+
+        switch inputMethod {
+        case .telex, .simpleTelex:
+            // [ ] { } are typing keys in Telex
+            if char == "[" || char == "]" || char == "{" || char == "}" {
+                return false
+            }
+            return char.isPunctuation || char.isMathSymbol
+
+        case .vni:
+            // Digits are typing keys in VNI
+            if char.isNumber {
+                return false
+            }
+            return char.isPunctuation || char.isMathSymbol
+
+        case .viqr:
+            // Special VIQR keys
+            let viqrKeys: Set<Character> = ["'", "`", "?", "~", ".", "^", "+", "*", "(", "-", "0"]
+            if viqrKeys.contains(char) {
+                return false
+            }
+            return char.isPunctuation || char.isMathSymbol
         }
     }
 
@@ -42,22 +85,22 @@ public class MoriEngine {
             return .passThrough
         }
 
-        // Space and Newlines always commit & reset buffer
-        if char.isWhitespace || char.isNewline {
+        // Delimiters (Space, Enter, Punctuation) commit buffer and check for macros
+        if isDelimiter(char) {
+            if macroEngine.isEnabled, let macroReplacement = macroEngine.lookup(word: currentWord) {
+                let deleteCount = currentWord.count
+                reset()
+                return .replace(deleteCount: deleteCount, text: macroReplacement + String(char))
+            }
             reset()
             return .passThrough
         }
 
+        rawWord.append(char)
+
         switch inputMethod {
         case .telex, .simpleTelex:
-            // In Telex, brackets [ and ] can be shortcuts for ơ and ư
-            let isTelexKey = char.isLetter || char == "[" || char == "]" || char == "{" || char == "}"
-            if !isTelexKey {
-                reset()
-                return .passThrough
-            }
-
-            // 1. Try diacritics (aa -> â, aw -> ă, dd -> đ, [ -> ơ, etc.)
+            // 1. Try diacritics (aa -> â, aw -> ă, dd -> đ, [ -> ơ, ] -> ư, etc.)
             if let transformed = DiacriticTransform.tryTransformVowel(
                 word: currentWord,
                 char: char,
@@ -74,13 +117,25 @@ public class MoriEngine {
                 char: char,
                 toneStyle: toneStyle
             ) {
+                // If spelling check is on, verify stop consonants (c, ch, p, t can only have acute or heavy)
+                if isSpellingCheckEnabled && !SpellingChecker.isValidVietnameseSyllable(transformed) {
+                    currentWord.append(char)
+                    return .passThrough
+                }
                 let deleteCount = currentWord.count
                 currentWord = transformed
                 return .replace(deleteCount: deleteCount, text: transformed)
             }
 
-            // Normal letter
+            // 3. Normal character typing
             if char.isLetter {
+                // Check if raw keystrokes form an invalid cluster (like "post", "text", "fast")
+                if isSpellingCheckEnabled && !SpellingChecker.isValidVietnameseSyllable(rawWord) {
+                    let deleteCount = currentWord.count
+                    currentWord = rawWord
+                    return .replace(deleteCount: deleteCount, text: rawWord)
+                }
+
                 currentWord.append(char)
                 return .passThrough
             } else {
@@ -89,7 +144,6 @@ public class MoriEngine {
             }
 
         case .vni:
-            // In VNI, letters and numbers (0-9) are valid
             if char.isNumber {
                 if let transformed = VNITransform.tryTransformVNI(
                     word: currentWord,
@@ -100,8 +154,7 @@ public class MoriEngine {
                     currentWord = transformed
                     return .replace(deleteCount: deleteCount, text: transformed)
                 } else {
-                    // A number that doesn't transform: commits word
-                    reset()
+                    currentWord.append(char)
                     return .passThrough
                 }
             } else if char.isLetter {
@@ -113,23 +166,8 @@ public class MoriEngine {
             }
 
         case .viqr:
-            // In VIQR: letters and special keys (' ` ? ~ . ^ + * ( - 0)
             let viqrSpecialKeys: Set<Character> = ["'", "`", "?", "~", ".", "^", "+", "*", "(", "-", "0"]
-            if viqrSpecialKeys.contains(char) {
-                if let transformed = VIQRTransform.tryTransformVIQR(
-                    word: currentWord,
-                    char: char,
-                    toneStyle: toneStyle
-                ) {
-                    let deleteCount = currentWord.count
-                    currentWord = transformed
-                    return .replace(deleteCount: deleteCount, text: transformed)
-                } else {
-                    reset()
-                    return .passThrough
-                }
-            } else if char.isLetter {
-                // Also check if dd -> đ in VIQR
+            if viqrSpecialKeys.contains(char) || char.isLetter {
                 if let transformed = VIQRTransform.tryTransformVIQR(
                     word: currentWord,
                     char: char,

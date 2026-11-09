@@ -33,13 +33,20 @@ public final class AppSettings: ObservableObject {
     }
 
     private init() {
-        self.isEnabled = UserDefaults.standard.object(forKey: Keys.isEnabled) as? Bool ?? true
-        
+        let isEnabled = UserDefaults.standard.object(forKey: Keys.isEnabled) as? Bool ?? true
         let methodRaw = UserDefaults.standard.string(forKey: Keys.inputMethod) ?? InputMethod.telex.rawValue
-        self.inputMethod = InputMethod(rawValue: methodRaw) ?? .telex
-
+        let inputMethod = InputMethod(rawValue: methodRaw) ?? .telex
         let toneRaw = UserDefaults.standard.string(forKey: Keys.toneStyle) ?? ToneStyle.modern.rawValue
-        self.toneStyle = ToneStyle(rawValue: toneRaw) ?? .modern
+        let toneStyle = ToneStyle(rawValue: toneRaw) ?? .modern
+
+        self.isEnabled = isEnabled
+        self.inputMethod = inputMethod
+        self.toneStyle = toneStyle
+
+        // Synchronize with the underlying engine immediately
+        MoriEngineManager.shared.engine.isEnabled = isEnabled
+        MoriEngineManager.shared.engine.inputMethod = inputMethod
+        MoriEngineManager.shared.engine.toneStyle = toneStyle
     }
 
     public func toggleVietnamese() {
@@ -50,4 +57,3 @@ public final class AppSettings: ObservableObject {
 extension Notification.Name {
     public static let moriSettingsChanged = Notification.Name("moriSettingsChanged")
 }
-

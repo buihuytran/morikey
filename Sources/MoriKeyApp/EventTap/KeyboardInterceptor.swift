@@ -21,7 +21,6 @@ public final class KeyboardInterceptor {
         }
 
         let eventMask: CGEventMask = (1 << CGEventType.keyDown.rawValue)
-
         let observer = Unmanaged.passUnretained(self).toOpaque()
 
         guard let tap = CGEvent.tapCreate(
@@ -43,7 +42,7 @@ public final class KeyboardInterceptor {
         CFRunLoopAddSource(CFRunLoopGetMain(), source, .commonModes)
         CGEvent.tapEnable(tap: tap, enable: true)
 
-        // Reset word buffer when user clicks mouse
+        // Reset word buffer when user clicks mouse anywhere
         mouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { _ in
             MoriEngineManager.shared.engine.reset()
         }
@@ -100,20 +99,25 @@ public final class KeyboardInterceptor {
             return nil
         }
 
+        // If Vietnamese mode is OFF, pass through directly
+        if !AppSettings.shared.isEnabled {
+            return Unmanaged.passRetained(event)
+        }
+
         // If Cmd, Ctrl, or Option is pressed, pass through & reset buffer
         if flags.contains(.maskCommand) || flags.contains(.maskControl) || flags.contains(.maskAlternate) {
             MoriEngineManager.shared.engine.reset()
             return Unmanaged.passRetained(event)
         }
 
-        // Backspace / Delete
+        // Backspace / Delete (0x33)
         if keyCode == 0x33 {
             MoriEngineManager.shared.engine.handleBackspace()
             return Unmanaged.passRetained(event)
         }
 
-        // Return (0x24), Tab (0x30), Escape (0x35), Space (0x31)
-        if keyCode == 0x24 || keyCode == 0x30 || keyCode == 0x35 || keyCode == 0x31 {
+        // Return (0x24), Tab (0x30), Escape (0x35)
+        if keyCode == 0x24 || keyCode == 0x30 || keyCode == 0x35 {
             MoriEngineManager.shared.engine.reset()
             return Unmanaged.passRetained(event)
         }
@@ -141,13 +145,13 @@ public final class KeyboardInterceptor {
             return Unmanaged.passRetained(event)
 
         case .replace(let deleteCount, let text):
-            // Backspace deleteCount times on screen
-            KeySimulator.sendBackspaces(count: deleteCount)
-            // Send transformed text
-            KeySimulator.sendString(text)
-            // Suppress the original raw keystroke
+            // Deliver replacement keystrokes asynchronously on main loop
+            // to allow the original suppressed key event to be dropped cleanly first
+            DispatchQueue.main.async {
+                KeySimulator.sendBackspaces(count: deleteCount)
+                KeySimulator.sendString(text)
+            }
             return nil
         }
     }
 }
-

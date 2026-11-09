@@ -24,6 +24,17 @@ public final class AppDelegate: NSObject, NSApplicationDelegate {
         } else {
             showPermissionGuide()
         }
+
+        // Auto-check timer in case user enables permission in System Settings
+        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
+            if AccessibilityHelper.isProcessTrusted() {
+                if KeyboardInterceptor.shared.start() {
+                    timer.invalidate()
+                    self?.permissionWindow?.close()
+                    self?.updateStatusItemTitle()
+                }
+            }
+        }
     }
 
     private func setupStatusItem() {

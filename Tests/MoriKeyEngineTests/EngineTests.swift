@@ -158,4 +158,35 @@ final class EngineTests: XCTestCase {
         engine.handleBackspace()
         XCTAssertEqual(engine.currentWord, "vi")
     }
+
+    func testMacroShortcuts() {
+        engine.inputMethod = .telex
+        engine.macroEngine.isEnabled = true
+        
+        // Typing "vn" + space -> replaces with "Việt Nam "
+        engine.reset()
+        _ = engine.process(char: "v")
+        _ = engine.process(char: "n")
+        let action = engine.process(char: " ")
+        XCTAssertEqual(action, .replace(deleteCount: 2, text: "Việt Nam "))
+
+        // Uppercase: "VN" + space -> "VIỆT NAM "
+        engine.reset()
+        _ = engine.process(char: "V")
+        _ = engine.process(char: "N")
+        let actionUpper = engine.process(char: " ")
+        XCTAssertEqual(actionUpper, .replace(deleteCount: 2, text: "VIỆT NAM "))
+    }
+
+    func testEnglishSpellingRestoration() {
+        engine.inputMethod = .telex
+        engine.isSpellingCheckEnabled = true
+
+        // Without spelling restoration, "pos" + "t" would produce "pót" or "pótt"
+        // With spelling restoration, it restores "post"
+        XCTAssertEqual(type("post"), "post")
+
+        // Invalid tone on stop consonant: "mac" + "f" (c can only have acute or heavy, not grave)
+        XCTAssertEqual(type("macf"), "macf")
+    }
 }

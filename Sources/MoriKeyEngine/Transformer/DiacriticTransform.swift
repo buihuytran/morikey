@@ -3,17 +3,27 @@ import Foundation
 public struct DiacriticTransform {
     public static func tryTransformVowel(
         word: String,
+        rawWord: String = "",
         char: Character,
-        inputMethod: InputMethod
+        inputMethod: InputMethod,
+        wAtWordStartAsW: Bool = true
     ) -> String? {
         let isUpper = char.isUppercase
         let lowerChar = Character(char.lowercased())
         var chars = Array(word)
+
+        // Empty buffer: user is typing the FIRST character of the word
         guard !chars.isEmpty else {
-            // Standalone 'w' or 'W'
-            if lowerChar == "w" && inputMethod == .telex {
-                return isUpper ? "Ư" : "ư"
+            // Standalone 'w' or 'W' at start of word
+            if lowerChar == "w" {
+                // If wAtWordStartAsW is true, or in Simple Telex: keep as 'w'
+                if wAtWordStartAsW || inputMethod == .simpleTelex {
+                    return nil
+                } else if inputMethod == .telex {
+                    return isUpper ? "Ư" : "ư"
+                }
             }
+
             if inputMethod == .telex || inputMethod == .simpleTelex {
                 if char == "[" { return "ơ" }
                 if char == "]" { return "ư" }
@@ -31,7 +41,6 @@ public struct DiacriticTransform {
         // 1. "dd" or "dD" -> "đ" / "Đ"
         if lowerChar == "d" {
             if lastLower == "d" {
-                // If last is 'd', turn into 'đ'
                 chars[lastIdx] = lastIsUpper ? "Đ" : "đ"
                 return String(chars)
             } else if lastLower == "đ" {
@@ -45,7 +54,6 @@ public struct DiacriticTransform {
 
         // 2. Circumflex: aa -> â, ee -> ê, oo -> ô
         if lowerChar == "a" {
-            // Check last char: a -> â
             let baseLast = VietnameseChar.removeTone(lastChar)
             let baseLastLower = Character(baseLast.lowercased())
             let currentTone = VietnameseChar.getTone(lastChar)
@@ -156,15 +164,30 @@ public struct DiacriticTransform {
                 chars[lastIdx] = VietnameseChar.applyTone(targetBase, tone: currentTone)
                 return String(chars)
             } else if baseLastLower == "ư" {
-                // Undo ư + w -> uw
-                let targetBase: Character = lastIsUpper ? "U" : "u"
-                chars[lastIdx] = VietnameseChar.applyTone(targetBase, tone: currentTone)
-                chars.append(isUpper ? "W" : "w")
-                return String(chars)
+                // CHECK: Did this 'ư' come from a standalone 'w' or from 'u' + 'w'?
+                let rawLower = rawWord.lowercased()
+                if rawLower == "w" || (chars.count == 1 && !rawLower.contains("u")) {
+                    // The user previously typed 'w' alone. Now typing 'w' again -> restore to 'w' (or 'ww')!
+                    // NEVER make it "uw"!
+                    return isUpper ? "W" : "w"
+                } else {
+                    // The user previously typed 'u' then 'w' -> undo to "uw"
+                    let targetBase: Character = lastIsUpper ? "U" : "u"
+                    chars[lastIdx] = VietnameseChar.applyTone(targetBase, tone: currentTone)
+                    chars.append(isUpper ? "W" : "w")
+                    return String(chars)
+                }
             } else if inputMethod == .telex {
-                // Standalone or after a consonant (e.g. "tw" -> "tư")
-                chars.append(isUpper ? "Ư" : "ư")
-                return String(chars)
+                // After a Vietnamese consonant (e.g. "tw" -> "tư", "sw" -> "sư", "chw" -> "chư")
+                let validConsonants: Set<Character> = [
+                    "b", "c", "d", "đ", "g", "h", "k", "l", "m", "n", "p", "r", "s", "t", "v", "x",
+                    "B", "C", "D", "Đ", "G", "H", "K", "L", "M", "N", "P", "R", "S", "T", "V", "X"
+                ]
+                if validConsonants.contains(lastChar) {
+                    chars.append(isUpper ? "Ư" : "ư")
+                    return String(chars)
+                }
+                return nil
             }
         }
 
@@ -237,7 +260,6 @@ public struct DiacriticTransform {
 
         // Double tap same tone key: e.g. "cá" + 's' -> toggle off to "cas"
         if targetTone != .none && currentTone == targetTone {
-            // Remove tone and append the raw tone key character
             var cleanWord = ""
             for c in word {
                 cleanWord.append(VietnameseChar.removeTone(c))
@@ -274,4 +296,3 @@ public struct DiacriticTransform {
         return String(resultChars)
     }
 }
-

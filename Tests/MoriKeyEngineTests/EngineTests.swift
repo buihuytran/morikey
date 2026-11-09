@@ -30,11 +30,40 @@ final class EngineTests: XCTestCase {
     }
 
     func testBreveAndHorn() {
+        // By default, wAtWordStartAsW is true, so standalone 'w' is 'w'
         XCTAssertEqual(type("aw"), "ă")
         XCTAssertEqual(type("ow"), "ơ")
         XCTAssertEqual(type("uw"), "ư")
         XCTAssertEqual(type("uow"), "ươ")
+        XCTAssertEqual(type("tw"), "tư")
+    }
+
+    func testWHandling() {
+        // Test 1: Modern default (wAtWordStartAsW == true)
+        engine.wAtWordStartAsW = true
+        XCTAssertEqual(type("w"), "w")
+        XCTAssertEqual(type("ww"), "ww")
+        XCTAssertEqual(type("www"), "www")
+        XCTAssertEqual(type("web"), "web")
+        XCTAssertEqual(type("win"), "win")
+        XCTAssertEqual(type("wiki"), "wiki")
+        // But combination with vowels still works:
+        XCTAssertEqual(type("uw"), "ư")
+        XCTAssertEqual(type("ow"), "ơ")
+        XCTAssertEqual(type("aw"), "ă")
+
+        // Test 2: Classic mode (wAtWordStartAsW == false)
+        engine.wAtWordStartAsW = false
+        // First 'w' gives 'ư'
         XCTAssertEqual(type("w"), "ư")
+        // Typing 'w' twice: 'w' + 'w' gives 'w' (NEVER 'uw'!)
+        XCTAssertEqual(type("ww"), "w")
+        // Typing 'w' three times gives 'ww'
+        XCTAssertEqual(type("www"), "ww")
+        // Typing 'u' + 'w' gives 'ư'
+        XCTAssertEqual(type("uw"), "ư")
+        // Typing 'u' + 'w' + 'w' undoes to 'uw'
+        XCTAssertEqual(type("uww"), "uw")
     }
 
     func testDoubleTapUndo() {

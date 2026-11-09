@@ -10,6 +10,7 @@ public class MoriEngine {
     public var toneStyle: ToneStyle
     public var isEnabled: Bool
     public var isSpellingCheckEnabled: Bool
+    public var wAtWordStartAsW: Bool
     public var macroEngine: MacroEngine
 
     /// Currently accumulated transformed word buffer (as displayed on screen)
@@ -22,12 +23,14 @@ public class MoriEngine {
         toneStyle: ToneStyle = .modern,
         isEnabled: Bool = true,
         isSpellingCheckEnabled: Bool = true,
+        wAtWordStartAsW: Bool = true,
         macroEngine: MacroEngine = MacroEngine()
     ) {
         self.inputMethod = inputMethod
         self.toneStyle = toneStyle
         self.isEnabled = isEnabled
         self.isSpellingCheckEnabled = isSpellingCheckEnabled
+        self.wAtWordStartAsW = wAtWordStartAsW
         self.macroEngine = macroEngine
     }
 
@@ -103,8 +106,10 @@ public class MoriEngine {
             // 1. Try diacritics (aa -> â, aw -> ă, dd -> đ, [ -> ơ, ] -> ư, etc.)
             if let transformed = DiacriticTransform.tryTransformVowel(
                 word: currentWord,
+                rawWord: rawWord,
                 char: char,
-                inputMethod: inputMethod
+                inputMethod: inputMethod,
+                wAtWordStartAsW: wAtWordStartAsW
             ) {
                 let deleteCount = currentWord.count
                 currentWord = transformed

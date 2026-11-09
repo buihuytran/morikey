@@ -127,6 +127,16 @@ struct SettingsView: View {
             }
 
             Section(header: Text("Tính năng thông minh")) {
+                Toggle(isOn: $settings.wAtWordStartAsW) {
+                    VStack(alignment: .leading) {
+                        Text("Giữ nguyên chữ 'w' ở đầu từ")
+                            .fontWeight(.medium)
+                        Text("Tránh việc gõ 'w' (như web, win, wifi, word, www) bị biến thành 'ư'")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+
                 Toggle(isOn: $settings.isSpellingCheckEnabled) {
                     VStack(alignment: .leading) {
                         Text("Tự động khôi phục từ tiếng Anh")

@@ -17,6 +17,7 @@ public final class AppSettings: ObservableObject {
         static let inputMethod = "mori_input_method"
         static let toneStyle = "mori_tone_style"
         static let isSpellingCheckEnabled = "mori_spelling_check"
+        static let wAtWordStartAsW = "mori_w_at_start_as_w"
         static let isMacroEnabled = "mori_macro_enabled"
         static let macroItems = "mori_macro_items_json"
         static let shortcutOption = "mori_shortcut_option"
@@ -48,6 +49,13 @@ public final class AppSettings: ObservableObject {
         didSet {
             UserDefaults.standard.set(isSpellingCheckEnabled, forKey: Keys.isSpellingCheckEnabled)
             MoriEngineManager.shared.engine.isSpellingCheckEnabled = isSpellingCheckEnabled
+        }
+    }
+
+    @Published public var wAtWordStartAsW: Bool {
+        didSet {
+            UserDefaults.standard.set(wAtWordStartAsW, forKey: Keys.wAtWordStartAsW)
+            MoriEngineManager.shared.engine.wAtWordStartAsW = wAtWordStartAsW
         }
     }
 
@@ -84,6 +92,7 @@ public final class AppSettings: ObservableObject {
         let toneRaw = UserDefaults.standard.string(forKey: Keys.toneStyle) ?? ToneStyle.modern.rawValue
         let toneStyle = ToneStyle(rawValue: toneRaw) ?? .modern
         let spelling = UserDefaults.standard.object(forKey: Keys.isSpellingCheckEnabled) as? Bool ?? true
+        let wAtStart = UserDefaults.standard.object(forKey: Keys.wAtWordStartAsW) as? Bool ?? true
         let macroOn = UserDefaults.standard.object(forKey: Keys.isMacroEnabled) as? Bool ?? true
         let shortcutRaw = UserDefaults.standard.string(forKey: Keys.shortcutOption) ?? ShortcutOption.controlSpace.rawValue
         let shortcut = ShortcutOption(rawValue: shortcutRaw) ?? .controlSpace
@@ -92,6 +101,7 @@ public final class AppSettings: ObservableObject {
         self.inputMethod = inputMethod
         self.toneStyle = toneStyle
         self.isSpellingCheckEnabled = spelling
+        self.wAtWordStartAsW = wAtStart
         self.isMacroEnabled = macroOn
         self.shortcutOption = shortcut
         self.launchAtLogin = LaunchAtLoginHelper.isEnabled
@@ -117,6 +127,7 @@ public final class AppSettings: ObservableObject {
         MoriEngineManager.shared.engine.inputMethod = inputMethod
         MoriEngineManager.shared.engine.toneStyle = toneStyle
         MoriEngineManager.shared.engine.isSpellingCheckEnabled = spelling
+        MoriEngineManager.shared.engine.wAtWordStartAsW = wAtStart
         MoriEngineManager.shared.engine.macroEngine.isEnabled = macroOn
         syncMacroEngine()
     }

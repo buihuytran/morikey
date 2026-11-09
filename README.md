@@ -1,0 +1,115 @@
+# MoriKey 🇻🇳 - Bộ gõ Tiếng Việt Native cho macOS
+
+**MoriKey** là phần mềm bộ gõ tiếng Việt hiện đại, nhẹ, viết 100% bằng Swift và SwiftUI cho macOS (hỗ trợ tối ưu Apple Silicon M1/M2/M3/M4 và Intel). 
+
+MoriKey chạy trực tiếp trên thanh menu bar (Status Bar) bằng cơ chế **CGEventTap (Trợ năng / Accessibility)** tương tự kiến trúc của EVKey và OpenKey, mang lại tốc độ phản hồi cực nhanh, không phụ thuộc vào hệ thống Input Sources phức tạp của macOS và dễ dàng tuỳ biến giao diện.
+
+---
+
+## ✨ Tính năng nổi bật
+
+- ⚡️ **Native & Siêu nhẹ**: Viết thuần Swift 5.9+ / Swift 6, không dùng webview hay runtime cồng kềnh, tiêu tốn rất ít RAM và CPU.
+- ⌨️ **Hỗ trợ kiểu gõ Telex & Simple Telex**:
+  - `aa` -> `â`, `aw` -> `ă`, `ee` -> `ê`, `oo` -> `ô`, `ow` -> `ơ`, `uw` -> `ư`, `uow` -> `ươ`, `dd` -> `đ`.
+  - Phím dấu: `s` (sắc), `f` (huyền), `r` (hỏi), `x` (ngã), `j` (nặng), `z` (xóa dấu).
+  - Khôi phục phím khi gõ đúp (ví dụ: `cas` + `s` -> `cas`, `aa` + `a` -> `aaa`).
+  - **Simple Telex**: Giữ nguyên `w` ở đầu từ tiếng Anh (ví dụ: `web`, `win`) tránh bị biến thành `ư`.
+- 🎯 **Quy tắc dấu linh hoạt**:
+  - **Kiểu mới**: `hòa`, `thúy`, `khỏe`
+  - **Kiểu cũ**: `hoà`, `thuý`, `khoẻ`
+- 🇻🇳/🔤 **Chuyển đổi nhanh**: Click vào biểu tượng trên Menu Bar để chuyển nhanh giữa chế độ Tiếng Việt `[V]` và Tiếng Anh `[E]`. Chuột phải hoặc Control-click để mở menu tuỳ chọn.
+- 🛡️ **Kiến trúc tách bạch (Modular Core)**:
+  - `MoriKeyEngine`: Core thư viện xử lý tiếng Việt độc lập, không dính UI, có bộ Unit Tests kiểm tra độ chuẩn xác.
+  - `MoriKeyApp`: Menu Bar App bằng SwiftUI & EventTap.
+
+---
+
+## 🏗️ Cấu trúc thư mục dự án
+
+```text
+morikey/
+├── Package.swift                     # Khai báo Swift Package (tương thích Xcode & Terminal)
+├── Makefile                          # Các lệnh tiện ích: build, test, app, run
+├── Resources/
+│   └── Info.plist                    # Bundle metadata (LSUIElement = true để chạy menu bar)
+├── scripts/
+│   └── bundle_app.sh                 # Script đóng gói binary thành MoriKey.app và ký mã ad-hoc
+├── Sources/
+│   ├── MoriKeyEngine/                # CORE BỘ GÕ TIẾNG VIỆT
+│   │   ├── Models/
+│   │   │   ├── InputMethod.swift     # Enum Telex, Simple Telex, Tone
+│   │   │   └── VietnameseChar.swift  # Bảng ký tự Unicode tiếng Việt, bảng dấu
+│   │   ├── Transformer/
+│   │   │   ├── ToneRule.swift        # Thuật toán định vị nguyên âm nhận dấu
+│   │   │   └── DiacriticTransform.swift # Xử lý biến đổi mũ, móc (â, ă, ê, ô, ơ, ư, đ)
+│   │   └── MoriEngine.swift          # Giao diện chính của Engine, quản lý buffer từ gõ
+│   └── MoriKeyApp/                   # MACOS APP & GIAO DIỆN
+│       ├── main.swift                # Điểm khởi chạy ứng dụng
+│       ├── AppDelegate.swift         # Quản lý NSStatusItem trên Menu Bar, Menu ngữ cảnh
+│       ├── EventTap/
+│       │   ├── KeyboardInterceptor.swift # CGEventTap lắng nghe phím toàn hệ thống
+│       │   ├── KeySimulator.swift        # Giả lập phím Backspace & chèn ký tự Unicode
+│       │   └── AccessibilityHelper.swift # Kiểm tra & xin quyền Trợ năng (Accessibility)
+│       ├── State/
+│       │   ├── AppSettings.swift         # Lưu cài đặt (UserDefaults)
+│       │   └── MoriEngineManager.swift   # Quản lý instance Engine
+│       └── Views/
+│           ├── SettingsView.swift        # Cửa sổ Cài đặt giao diện SwiftUI
+│           └── PermissionGuideView.swift # Hướng dẫn cấp quyền Trợ năng
+└── Tests/
+    └── MoriKeyEngineTests/
+        └── EngineTests.swift         # Unit tests kiểm tra quy tắc gõ & dấu thanh
+```
+
+---
+
+## 🚀 Hướng dẫn cài đặt & Chạy
+
+### 1. Yêu cầu hệ thống
+- macOS 13.0 (Ventura) trở lên.
+- Đã cài đặt **Xcode** hoặc **Command Line Tools** (`swift --version`).
+
+### 2. Sử dụng lệnh nhanh qua Makefile
+
+Chạy Terminal tại thư mục dự án `morikey`:
+
+- **Chạy kiểm tra tự động (Unit Tests):**
+  ```bash
+  make test
+  ```
+- **Đóng gói ứng dụng `MoriKey.app`:**
+  ```bash
+  make app
+  ```
+  Ứng dụng hoàn chỉnh sẽ được tạo tại `build/MoriKey.app`.
+
+- **Mở và chạy trực tiếp:**
+  ```bash
+  make run
+  ```
+
+- **Mở dự án trong Xcode để phát triển tiếp:**
+  ```bash
+  make xcode
+  ```
+  *(Hoặc mở file `Package.swift` bằng Xcode)*
+
+---
+
+## 🔒 Hướng dẫn cấp quyền Trợ năng (Accessibility)
+
+Do macOS bảo vệ quyền riêng tư người dùng, mọi phần mềm bộ gõ chạy kiểu Event Tap đều cần quyền Trợ năng để đọc và thay thế phím:
+
+1. Khi khởi chạy MoriKey lần đầu, một hộp thoại hướng dẫn sẽ xuất hiện.
+2. Nhấn nút **"Mở Cài đặt hệ thống"** (hoặc vào **System Settings** > **Privacy & Security** > **Accessibility**).
+3. Bật công tắc cho phép **MoriKey**.
+4. Quay lại MoriKey nhấn **"Kiểm tra lại"** — biểu tượng `[V]` sẽ sẵn sàng hoạt động ngay trên menu bar!
+
+---
+
+## 💡 Mở rộng trong tương lai
+
+Dự án được thiết kế theo module rất dễ mở rộng:
+- **Thêm kiểu gõ VNI**: Thêm logic map phím số `1..9` vào thư mục `MoriKeyEngine/Transformer/`.
+- **Bảng gõ tắt (Macro / Shortcuts)**: Thêm Dictionary lưu trữ từ viết tắt trong `MoriEngine`.
+- **Tự động khôi phục từ tiếng Anh (Spelling check)**: Kiểm tra các tiền tố/hậu tố không tồn tại trong tiếng Việt để tự động phục hồi chữ tiếng Anh.

@@ -29,8 +29,8 @@ mkdir -p "$RESOURCES_DIR"
 cp "$BIN_PATH" "$MACOS_DIR/MoriKey"
 cp "Resources/Info.plist" "$CONTENTS_DIR/Info.plist"
 
-echo "🔏 Ad-hoc signing MoriKey.app..."
-codesign --force --deep --sign - "$APP_DIR"
+echo "🔏 Signing MoriKey.app with stable designated requirement..."
+codesign --force --deep --sign - --identifier "com.mori.morikey" -r='designated => identifier "com.mori.morikey"' "$APP_DIR"
 
 echo "✅ MoriKey.app successfully created at $APP_DIR"
 

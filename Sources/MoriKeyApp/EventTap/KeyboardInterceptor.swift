@@ -12,19 +12,23 @@ public final class KeyboardInterceptor {
     private init() {}
 
     public func start() -> Bool {
-        guard AccessibilityHelper.isProcessTrusted() else {
+        let trusted = AccessibilityHelper.isProcessTrusted()
+        NSLog("[MoriKey] start() called. isProcessTrusted: %d", trusted ? 1 : 0)
+        guard trusted else {
             return false
         }
 
         if eventTap != nil {
+            NSLog("[MoriKey] eventTap is already running")
             return true
         }
 
         let eventMask: CGEventMask = (1 << CGEventType.keyDown.rawValue)
         let observer = Unmanaged.passUnretained(self).toOpaque()
 
-        guard let tap = CGEvent.tapCreate(
-            tap: .cgSessionEventTap,
+        // 1. Try .cghidEventTap first (hardware-level, captures all apps)
+        var tap = CGEvent.tapCreate(
+            tap: .cghidEventTap,
             place: .headInsertEventTap,
             options: .defaultTap,
             eventsOfInterest: eventMask,
@@ -32,17 +36,36 @@ public final class KeyboardInterceptor {
                 return KeyboardInterceptor.shared.handleEvent(proxy: proxy, type: type, event: event)
             },
             userInfo: observer
-        ) else {
+        )
+
+        // 2. If cghidEventTap failed, try .cgSessionEventTap
+        if tap == nil {
+            NSLog("[MoriKey] cghidEventTap returned nil, trying cgSessionEventTap...")
+            tap = CGEvent.tapCreate(
+                tap: .cgSessionEventTap,
+                place: .headInsertEventTap,
+                options: .defaultTap,
+                eventsOfInterest: eventMask,
+                callback: { (proxy, type, event, refcon) -> Unmanaged<CGEvent>? in
+                    return KeyboardInterceptor.shared.handleEvent(proxy: proxy, type: type, event: event)
+                },
+                userInfo: observer
+            )
+        }
+
+        guard let validTap = tap else {
+            NSLog("[MoriKey] CRITICAL: Failed to create both cghidEventTap and cgSessionEventTap!")
             return false
         }
 
-        self.eventTap = tap
-        let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0)
+        NSLog("[MoriKey] SUCCESS: eventTap created successfully!")
+        self.eventTap = validTap
+        let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, validTap, 0)
         self.runLoopSource = source
         CFRunLoopAddSource(CFRunLoopGetMain(), source, .commonModes)
-        CGEvent.tapEnable(tap: tap, enable: true)
+        CGEvent.tapEnable(tap: validTap, enable: true)
 
-        // Reset word buffer when user clicks mouse anywhere
+        // Reset buffer when user clicks mouse anywhere
         mouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { _ in
             MoriEngineManager.shared.engine.reset()
         }
@@ -91,12 +114,25 @@ public final class KeyboardInterceptor {
         let flags = event.flags
         let keyCode = event.getIntegerValueField(.keyboardEventKeycode)
 
-        // Hotkey: Control + Space -> Toggle Vietnamese / English
-        if flags.contains(.maskControl) && keyCode == 0x31 {
-            DispatchQueue.main.async {
-                AppSettings.shared.toggleVietnamese()
+        // Hotkey: Toggle Vietnamese / English
+        if keyCode == 0x31 { // Space
+            let option = AppSettings.shared.shortcutOption
+            var isTriggered = false
+            switch option {
+            case .controlSpace:
+                isTriggered = flags.contains(.maskControl)
+            case .optionSpace:
+                isTriggered = flags.contains(.maskAlternate)
+            case .shiftSpace:
+                isTriggered = flags.contains(.maskShift)
             }
-            return nil
+
+            if isTriggered {
+                DispatchQueue.main.async {
+                    AppSettings.shared.toggleVietnamese()
+                }
+                return nil
+            }
         }
 
         // If Vietnamese mode is OFF, pass through directly
@@ -145,12 +181,8 @@ public final class KeyboardInterceptor {
             return Unmanaged.passRetained(event)
 
         case .replace(let deleteCount, let text):
-            // Deliver replacement keystrokes asynchronously on main loop
-            // to allow the original suppressed key event to be dropped cleanly first
-            DispatchQueue.main.async {
-                KeySimulator.sendBackspaces(count: deleteCount)
-                KeySimulator.sendString(text)
-            }
+            KeySimulator.sendBackspaces(count: deleteCount)
+            KeySimulator.sendString(text)
             return nil
         }
     }

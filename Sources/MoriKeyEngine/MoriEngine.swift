@@ -89,7 +89,7 @@ public class MoriEngine {
         }
 
         // Delimiters (Space, Enter, Punctuation) commit buffer, check for macros,
-        // and perform smart English restoration for words like "is", "as", "this", "for", "see"...
+        // and perform smart English restoration for words like "is", "as", "this", "for", "see", "morning", "good"...
         if isDelimiter(char) {
             // 1. Macro expansion
             if macroEngine.isEnabled, let macroReplacement = macroEngine.lookup(word: currentWord) {
@@ -116,17 +116,21 @@ public class MoriEngine {
 
         switch inputMethod {
         case .telex, .simpleTelex:
-            // Real-time check: if rawWord starts with non-Vietnamese consonant cluster (e.g. "cl", "fr", "st", "sp", "pr", "pl")
-            // or starts with a foreign letter (f, j, z) -> bypass Telex modifications!
+            // 0. Foreign word bypass:
+            // If the word starts with foreign letters/clusters (f, j, z, cl, fr, pr, st...), OR
+            // the buffer has ALREADY become polysyllabic in screen text (e.g. "morni", "docto", "syste"),
+            // bypass Telex transforms so subsequent letters are typed directly!
             if isSpellingCheckEnabled {
-                if SpellingChecker.hasInvalidInitialCluster(rawWord) || SpellingChecker.hasForeignInitialOrChar(rawWord) {
+                let isForeignInitial = SpellingChecker.hasInvalidInitialCluster(rawWord) || SpellingChecker.hasForeignInitialOrChar(rawWord)
+                let isAlreadyPolysyllabic = !currentWord.isEmpty && SpellingChecker.isPolysyllabicWord(currentWord)
+                if isForeignInitial || isAlreadyPolysyllabic {
                     currentWord.append(char)
                     return .passThrough
                 }
             }
 
             // 1. Try diacritics (aa -> â, aw -> ă, dd -> đ, [ -> ơ, ] -> ư, etc.)
-            if let transformed = DiacriticTransform.tryTransformVowel(
+            if let result = DiacriticTransform.tryTransformVowel(
                 word: currentWord,
                 rawWord: rawWord,
                 char: char,
@@ -134,40 +138,61 @@ public class MoriEngine {
                 wAtWordStartAsW: wAtWordStartAsW
             ) {
                 let deleteCount = currentWord.count
-                currentWord = transformed
-                return .replace(deleteCount: deleteCount, text: transformed)
+                currentWord = result.text
+                if result.isUndo {
+                    rawWord = result.text
+                }
+                return .replace(deleteCount: deleteCount, text: result.text)
             }
 
             // 2. Try tones (s, f, r, x, j, z)
-            if let transformed = DiacriticTransform.tryApplyTone(
+            if let result = DiacriticTransform.tryApplyTone(
                 word: currentWord,
                 char: char,
                 toneStyle: toneStyle
             ) {
                 let deleteCount = currentWord.count
-                currentWord = transformed
-                return .replace(deleteCount: deleteCount, text: transformed)
+                currentWord = result.text
+                if result.isUndo {
+                    rawWord = result.text
+                }
+                return .replace(deleteCount: deleteCount, text: result.text)
             }
 
             // 3. Normal character typing
             if char.isLetter {
-                let candidate = currentWord + String(char)
+                let directCandidate = currentWord + String(char)
+                let candidate = ToneRule.repositionTone(in: directCandidate, toneStyle: toneStyle)
 
-                // Real-time check: if appending this letter forms an invalid coda (e.g. "look", "good", "feel")
-                // or forms an invalid cluster on rawWord (e.g. "post", "text") -> restore raw English word!
+                // Real-time check: if appending this letter forms an English word or non-Vietnamese structure:
                 if isSpellingCheckEnabled && currentWord != rawWord {
-                    if SpellingChecker.hasInvalidCoda(candidate) {
+                    var shouldRestore = false
+
+                    // 1. Candidate has an invalid Vietnamese coda (e.g. "gôd", "lôk", "fêl", "nêd", "wỏd", "cảd")
+                    if SpellingChecker.hasInvalidCoda(directCandidate) {
+                        shouldRestore = true
+                    }
+                    // 2. Candidate has become polysyllabic (e.g. "morni", "syste", "servi", "docto")
+                    else if SpellingChecker.isPolysyllabicWord(directCandidate) {
+                        shouldRestore = true
+                    }
+                    // 3. rawWord is a common English word (e.g. "good", "morn", "morning", "post", "test", "cost")
+                    else if EnglishDictionary.isCommonEnglishWord(rawWord) {
+                        shouldRestore = true
+                    }
+
+                    if shouldRestore {
                         let deleteCount = currentWord.count
                         currentWord = rawWord
                         return .replace(deleteCount: deleteCount, text: rawWord)
                     }
-                    for cluster in SpellingChecker.invalidFinalClusters {
-                        if rawWord.lowercased().hasSuffix(cluster) {
-                            let deleteCount = currentWord.count
-                            currentWord = rawWord
-                            return .replace(deleteCount: deleteCount, text: rawWord)
-                        }
-                    }
+                }
+
+                if candidate != directCandidate {
+                    // Tone was repositioned (e.g. "toả" + "n" -> "toản")
+                    let deleteCount = currentWord.count
+                    currentWord = candidate
+                    return .replace(deleteCount: deleteCount, text: candidate)
                 }
 
                 currentWord.append(char)

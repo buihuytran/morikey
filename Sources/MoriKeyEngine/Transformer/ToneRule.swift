@@ -20,8 +20,6 @@ public struct ToneRule {
         }
 
         // Special handling for initial "qu" and "gi"
-        // In "qu", 'u' behaves as part of consonant cluster if followed by another vowel
-        // In "gi", 'i' behaves as part of consonant cluster if followed by another vowel
         var adjustedVowelIndices = vowelIndices
         let lowerWord = word.lowercased()
 
@@ -95,5 +93,33 @@ public struct ToneRule {
 
         return word.index(word.startIndex, offsetBy: adjustedVowelIndices[0])
     }
-}
 
+    /// When a consonant is added, reposition tone if needed (e.g. "tỏa" + "n" -> "toản", "tóa" + "n" -> "toán")
+    public static func repositionTone(in word: String, toneStyle: ToneStyle) -> String {
+        var currentTone: Tone = .none
+        for c in word {
+            let t = VietnameseChar.getTone(c)
+            if t != .none {
+                currentTone = t
+                break
+            }
+        }
+        guard currentTone != .none else { return word }
+
+        var baseChars: [Character] = []
+        for c in word {
+            baseChars.append(VietnameseChar.removeTone(c))
+        }
+        let cleanWord = String(baseChars)
+
+        guard let targetIndex = findToneTargetIndex(in: cleanWord, toneStyle: toneStyle) else {
+            return word
+        }
+
+        var resultChars = Array(cleanWord)
+        let offset = cleanWord.distance(from: cleanWord.startIndex, to: targetIndex)
+        let targetChar = resultChars[offset]
+        resultChars[offset] = VietnameseChar.applyTone(targetChar, tone: currentTone)
+        return String(resultChars)
+    }
+}

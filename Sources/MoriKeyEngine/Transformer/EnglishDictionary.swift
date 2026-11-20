@@ -23,7 +23,7 @@ public struct EnglishDictionary {
 
         // 4-letter words
         "that", "with", "have", "this", "will", "your", "from", "they", "know",
-        "want", "been", "good", "much", "some", "time", "very", "when", "come",
+        "want", "been", "good", "goods", "much", "some", "time", "very", "when", "come",
         "here", "just", "like", "long", "make", "many", "more", "only", "over",
         "such", "take", "than", "them", "well", "were", "down", "show", "look",
         "help", "book", "back", "work", "part", "even", "most", "open", "stop",
@@ -42,6 +42,8 @@ public struct EnglishDictionary {
         "cron", "kill", "grep", "curl", "echo", "make", "docs", "feed", "mail",
         "note", "task", "todo", "done", "fail", "pass", "warn", "date", "time",
         "year", "hour", "step", "draw", "flow", "push", "pull", "fork", "drop",
+        "morn", "hard", "yard", "dark", "park", "mark", "cost", "best", "past",
+        "west", "east", "lost",
 
         // 5-letter words
         "about", "after", "again", "below", "could", "every", "first", "found",
@@ -60,8 +62,15 @@ public struct EnglishDictionary {
         "scale", "space", "align", "match", "split", "slice", "shift", "layer",
         "frame", "scene", "audio", "video", "media", "music", "photo", "track",
         "album", "voice", "sound", "light", "speed", "power", "level", "score",
+        "night", "today", "party", "phone", "mouse", "email", "thank", "sorry",
+        "hello",
 
         // 6+ letter programming & common words
+        "morning", "mornings", "evening", "tonight", "tomorrow", "yesterday",
+        "welcome", "friend", "family", "doctor", "student", "teacher", "school",
+        "company", "market", "service", "computer", "mobile", "laptop", "screen",
+        "keyboard", "message", "letter", "process", "thanks", "please",
+        "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
         "server", "client", "string", "return", "system", "script", "number",
         "boolean", "object", "module", "import", "export", "switch", "struct",
         "static", "public", "private", "socket", "thread", "future", "stream",
@@ -91,4 +100,3 @@ public struct EnglishDictionary {
         return commonWords.contains(word.lowercased())
     }
 }
-

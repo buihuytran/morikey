@@ -112,6 +112,9 @@ final class EngineTests: XCTestCase {
         XCTAssertEqual(type("khoer"), "khỏe")
         XCTAssertEqual(type("chusc"), "chúc")
         XCTAssertEqual(type("muwngf"), "mừng")
+        XCTAssertEqual(type("toarn"), "toản")
+        XCTAssertEqual(type("toasn"), "toán")
+        XCTAssertEqual(type("tieesp"), "tiếp")
     }
 
     func testModernVsClassicTone() {
@@ -231,9 +234,24 @@ final class EngineTests: XCTestCase {
         engine.inputMethod = .telex
         engine.isSpellingCheckEnabled = true
 
-        // Real-time tests
-        XCTAssertEqual(type("post"), "post")
+        // 1. Both typing styles for "good": natural (g-o-o-d) and traditional manual undo (g-o-o-o-d)
         XCTAssertEqual(type("good"), "good")
+        XCTAssertEqual(type("goood"), "good")
+        XCTAssertEqual(typeSentence("good "), "good ")
+        XCTAssertEqual(typeSentence("goood "), "good ")
+
+        // 2. Both typing styles for "morning": natural (m-o-r-n-i-n-g) and traditional manual undo (m-o-r-r-n-i-n-g)
+        XCTAssertEqual(type("morning"), "morning")
+        XCTAssertEqual(type("morrning"), "morning")
+        XCTAssertEqual(typeSentence("morning "), "morning ")
+        XCTAssertEqual(typeSentence("morrning "), "morning ")
+
+        // 3. Combined sentence test
+        XCTAssertEqual(typeSentence("good morning "), "good morning ")
+        XCTAssertEqual(typeSentence("goood morrning "), "good morning ")
+
+        // 4. Other common English words in real-time
+        XCTAssertEqual(type("post"), "post")
         XCTAssertEqual(type("look"), "look")
         XCTAssertEqual(type("feel"), "feel")
         XCTAssertEqual(type("need"), "need")
@@ -241,14 +259,20 @@ final class EngineTests: XCTestCase {
         XCTAssertEqual(type("print"), "print")
         XCTAssertEqual(type("clear"), "clear")
         XCTAssertEqual(type("free"), "free")
+        XCTAssertEqual(type("doctor"), "doctor")
+        XCTAssertEqual(type("system"), "system")
+        XCTAssertEqual(type("server"), "server")
+        XCTAssertEqual(type("format"), "format")
+        XCTAssertEqual(type("window"), "window")
 
-        // Word boundary tests with spaces (common words like is, as, this, for, see, test...)
+        // 5. Word boundary tests with spaces (common words like is, as, this, for, see, test...)
         XCTAssertEqual(typeSentence("this is a good test "), "this is a good test ")
         XCTAssertEqual(typeSentence("as if of or for "), "as if of or for ")
         XCTAssertEqual(typeSentence("see feel need keep look book "), "see feel need keep look book ")
         XCTAssertEqual(typeSentence("const return system server "), "const return system server ")
 
-        // Ensure Vietnamese sentences STILL type 100% correctly!
+        // 6. Ensure Vietnamese sentences STILL type 100% correctly!
         XCTAssertEqual(typeSentence("tieengs vieetj dduwowngf muwngf "), "tiếng việt đường mừng ")
+        XCTAssertEqual(typeSentence("chusc muwngf buooir sasng "), "chúc mừng buổi sáng ")
     }
 }

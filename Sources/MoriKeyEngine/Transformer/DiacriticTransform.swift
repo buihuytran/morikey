@@ -1,5 +1,15 @@
 import Foundation
 
+public struct TransformResult: Equatable {
+    public let text: String
+    public let isUndo: Bool
+
+    public init(text: String, isUndo: Bool = false) {
+        self.text = text
+        self.isUndo = isUndo
+    }
+}
+
 public struct DiacriticTransform {
     public static func tryTransformVowel(
         word: String,
@@ -7,7 +17,7 @@ public struct DiacriticTransform {
         char: Character,
         inputMethod: InputMethod,
         wAtWordStartAsW: Bool = true
-    ) -> String? {
+    ) -> TransformResult? {
         let isUpper = char.isUppercase
         let lowerChar = Character(char.lowercased())
         var chars = Array(word)
@@ -20,15 +30,15 @@ public struct DiacriticTransform {
                 if wAtWordStartAsW || inputMethod == .simpleTelex {
                     return nil
                 } else if inputMethod == .telex {
-                    return isUpper ? "Ư" : "ư"
+                    return TransformResult(text: isUpper ? "Ư" : "ư", isUndo: false)
                 }
             }
 
             if inputMethod == .telex || inputMethod == .simpleTelex {
-                if char == "[" { return "ơ" }
-                if char == "]" { return "ư" }
-                if char == "{" { return "Ơ" }
-                if char == "}" { return "Ư" }
+                if char == "[" { return TransformResult(text: "ơ", isUndo: false) }
+                if char == "]" { return TransformResult(text: "ư", isUndo: false) }
+                if char == "{" { return TransformResult(text: "Ơ", isUndo: false) }
+                if char == "}" { return TransformResult(text: "Ư", isUndo: false) }
             }
             return nil
         }
@@ -42,12 +52,12 @@ public struct DiacriticTransform {
         if lowerChar == "d" {
             if lastLower == "d" {
                 chars[lastIdx] = lastIsUpper ? "Đ" : "đ"
-                return String(chars)
+                return TransformResult(text: String(chars), isUndo: false)
             } else if lastLower == "đ" {
                 // Double tap undo: 'đ' + 'd' -> "dd"
                 chars[lastIdx] = lastIsUpper ? "D" : "d"
                 chars.append(isUpper ? "D" : "d")
-                return String(chars)
+                return TransformResult(text: String(chars), isUndo: true)
             }
             return nil
         }
@@ -61,13 +71,13 @@ public struct DiacriticTransform {
             if baseLastLower == "a" {
                 let targetBase: Character = lastIsUpper ? "Â" : "â"
                 chars[lastIdx] = VietnameseChar.applyTone(targetBase, tone: currentTone)
-                return String(chars)
+                return TransformResult(text: String(chars), isUndo: false)
             } else if baseLastLower == "â" {
                 // Double tap undo: â + a -> aa
                 let targetBase: Character = lastIsUpper ? "A" : "a"
                 chars[lastIdx] = VietnameseChar.applyTone(targetBase, tone: currentTone)
                 chars.append(isUpper ? "A" : "a")
-                return String(chars)
+                return TransformResult(text: String(chars), isUndo: true)
             }
         }
 
@@ -79,13 +89,13 @@ public struct DiacriticTransform {
             if baseLastLower == "e" {
                 let targetBase: Character = lastIsUpper ? "Ê" : "ê"
                 chars[lastIdx] = VietnameseChar.applyTone(targetBase, tone: currentTone)
-                return String(chars)
+                return TransformResult(text: String(chars), isUndo: false)
             } else if baseLastLower == "ê" {
                 // Double tap undo
                 let targetBase: Character = lastIsUpper ? "E" : "e"
                 chars[lastIdx] = VietnameseChar.applyTone(targetBase, tone: currentTone)
                 chars.append(isUpper ? "E" : "e")
-                return String(chars)
+                return TransformResult(text: String(chars), isUndo: true)
             }
         }
 
@@ -97,20 +107,20 @@ public struct DiacriticTransform {
             if baseLastLower == "o" {
                 let targetBase: Character = lastIsUpper ? "Ô" : "ô"
                 chars[lastIdx] = VietnameseChar.applyTone(targetBase, tone: currentTone)
-                return String(chars)
+                return TransformResult(text: String(chars), isUndo: false)
             } else if baseLastLower == "ô" {
-                // Double tap undo
+                // Double tap undo: ô + o -> oo
                 let targetBase: Character = lastIsUpper ? "O" : "o"
                 chars[lastIdx] = VietnameseChar.applyTone(targetBase, tone: currentTone)
                 chars.append(isUpper ? "O" : "o")
-                return String(chars)
+                return TransformResult(text: String(chars), isUndo: true)
             }
         }
 
         // 3. 'w' transformations (Breve & Horn):
         // aw -> ă, ow -> ơ, uw -> ư, uow -> ươ
         if lowerChar == "w" {
-            // Check for 'uo' -> 'ươ'
+            // Check for 'uo' or 'ưo' -> 'ươ'
             if chars.count >= 2 {
                 let secondLastIdx = chars.count - 2
                 let c1 = VietnameseChar.removeTone(chars[secondLastIdx])
@@ -118,12 +128,12 @@ public struct DiacriticTransform {
                 let c1Lower = Character(c1.lowercased())
                 let c2Lower = Character(c2.lowercased())
 
-                if c1Lower == "u" && c2Lower == "o" {
+                if (c1Lower == "u" || c1Lower == "ư") && c2Lower == "o" {
                     let tone = VietnameseChar.getTone(chars[lastIdx])
                     chars[secondLastIdx] = chars[secondLastIdx].isUppercase ? "Ư" : "ư"
                     let targetO: Character = chars[lastIdx].isUppercase ? "Ơ" : "ơ"
                     chars[lastIdx] = VietnameseChar.applyTone(targetO, tone: tone)
-                    return String(chars)
+                    return TransformResult(text: String(chars), isUndo: false)
                 } else if c1Lower == "ư" && c2Lower == "ơ" {
                     // Undo 'ươ' + 'w' -> 'uow'
                     let tone = VietnameseChar.getTone(chars[lastIdx])
@@ -131,7 +141,7 @@ public struct DiacriticTransform {
                     let targetO: Character = chars[lastIdx].isUppercase ? "O" : "o"
                     chars[lastIdx] = VietnameseChar.applyTone(targetO, tone: tone)
                     chars.append(isUpper ? "W" : "w")
-                    return String(chars)
+                    return TransformResult(text: String(chars), isUndo: true)
                 }
             }
 
@@ -142,40 +152,39 @@ public struct DiacriticTransform {
             if baseLastLower == "a" {
                 let targetBase: Character = lastIsUpper ? "Ă" : "ă"
                 chars[lastIdx] = VietnameseChar.applyTone(targetBase, tone: currentTone)
-                return String(chars)
+                return TransformResult(text: String(chars), isUndo: false)
             } else if baseLastLower == "ă" {
                 // Undo ă + w -> aw
                 let targetBase: Character = lastIsUpper ? "A" : "a"
                 chars[lastIdx] = VietnameseChar.applyTone(targetBase, tone: currentTone)
                 chars.append(isUpper ? "W" : "w")
-                return String(chars)
+                return TransformResult(text: String(chars), isUndo: true)
             } else if baseLastLower == "o" {
                 let targetBase: Character = lastIsUpper ? "Ơ" : "ơ"
                 chars[lastIdx] = VietnameseChar.applyTone(targetBase, tone: currentTone)
-                return String(chars)
+                return TransformResult(text: String(chars), isUndo: false)
             } else if baseLastLower == "ơ" {
                 // Undo ơ + w -> ow
                 let targetBase: Character = lastIsUpper ? "O" : "o"
                 chars[lastIdx] = VietnameseChar.applyTone(targetBase, tone: currentTone)
                 chars.append(isUpper ? "W" : "w")
-                return String(chars)
+                return TransformResult(text: String(chars), isUndo: true)
             } else if baseLastLower == "u" {
                 let targetBase: Character = lastIsUpper ? "Ư" : "ư"
                 chars[lastIdx] = VietnameseChar.applyTone(targetBase, tone: currentTone)
-                return String(chars)
+                return TransformResult(text: String(chars), isUndo: false)
             } else if baseLastLower == "ư" {
                 // CHECK: Did this 'ư' come from a standalone 'w' or from 'u' + 'w'?
                 let rawLower = rawWord.lowercased()
                 if rawLower == "w" || (chars.count == 1 && !rawLower.contains("u")) {
-                    // The user previously typed 'w' alone. Now typing 'w' again -> restore to 'w' (or 'ww')!
-                    // NEVER make it "uw"!
-                    return isUpper ? "W" : "w"
+                    // Standalone 'w' -> restore to 'w' (or 'ww')
+                    return TransformResult(text: isUpper ? "W" : "w", isUndo: true)
                 } else {
-                    // The user previously typed 'u' then 'w' -> undo to "uw"
+                    // 'u' then 'w' -> undo to "uw"
                     let targetBase: Character = lastIsUpper ? "U" : "u"
                     chars[lastIdx] = VietnameseChar.applyTone(targetBase, tone: currentTone)
                     chars.append(isUpper ? "W" : "w")
-                    return String(chars)
+                    return TransformResult(text: String(chars), isUndo: true)
                 }
             } else if inputMethod == .telex {
                 // After a Vietnamese consonant (e.g. "tw" -> "tư", "sw" -> "sư", "chw" -> "chư")
@@ -185,7 +194,7 @@ public struct DiacriticTransform {
                 ]
                 if validConsonants.contains(lastChar) {
                     chars.append(isUpper ? "Ư" : "ư")
-                    return String(chars)
+                    return TransformResult(text: String(chars), isUndo: false)
                 }
                 return nil
             }
@@ -196,31 +205,31 @@ public struct DiacriticTransform {
             if char == "[" {
                 if lastChar == "ơ" {
                     chars[lastIdx] = "["
-                    return String(chars)
+                    return TransformResult(text: String(chars), isUndo: true)
                 }
                 chars.append("ơ")
-                return String(chars)
+                return TransformResult(text: String(chars), isUndo: false)
             } else if char == "]" {
                 if lastChar == "ư" {
                     chars[lastIdx] = "]"
-                    return String(chars)
+                    return TransformResult(text: String(chars), isUndo: true)
                 }
                 chars.append("ư")
-                return String(chars)
+                return TransformResult(text: String(chars), isUndo: false)
             } else if char == "{" {
                 if lastChar == "Ơ" {
                     chars[lastIdx] = "{"
-                    return String(chars)
+                    return TransformResult(text: String(chars), isUndo: true)
                 }
                 chars.append("Ơ")
-                return String(chars)
+                return TransformResult(text: String(chars), isUndo: false)
             } else if char == "}" {
                 if lastChar == "Ư" {
                     chars[lastIdx] = "}"
-                    return String(chars)
+                    return TransformResult(text: String(chars), isUndo: true)
                 }
                 chars.append("Ư")
-                return String(chars)
+                return TransformResult(text: String(chars), isUndo: false)
             }
         }
 
@@ -232,7 +241,7 @@ public struct DiacriticTransform {
         word: String,
         char: Character,
         toneStyle: ToneStyle
-    ) -> String? {
+    ) -> TransformResult? {
         let lowerChar = Character(char.lowercased())
         let tone: Tone?
 
@@ -265,7 +274,7 @@ public struct DiacriticTransform {
                 cleanWord.append(VietnameseChar.removeTone(c))
             }
             cleanWord.append(char)
-            return cleanWord
+            return TransformResult(text: cleanWord, isUndo: true)
         }
 
         // Remove any existing tone first
@@ -278,7 +287,7 @@ public struct DiacriticTransform {
         if targetTone == .none {
             // 'z' pressed -> remove tone
             if currentTone != .none {
-                return cleanWord
+                return TransformResult(text: cleanWord, isUndo: true)
             }
             return nil
         }
@@ -293,6 +302,6 @@ public struct DiacriticTransform {
         resultChars[cleanWord.distance(from: cleanWord.startIndex, to: targetIndex)] =
             VietnameseChar.applyTone(targetChar, tone: targetTone)
 
-        return String(resultChars)
+        return TransformResult(text: String(resultChars), isUndo: false)
     }
 }

@@ -18,6 +18,25 @@ final class EngineTests: XCTestCase {
         return engine.currentWord
     }
 
+    /// Helper to simulate real screen typing with replacements and word boundaries
+    private func typeSentence(_ text: String) -> String {
+        engine.reset()
+        var screen = ""
+        for char in text {
+            let action = engine.process(char: char)
+            switch action {
+            case .passThrough:
+                screen.append(char)
+            case .replace(let deleteCount, let newText):
+                if deleteCount > 0 && screen.count >= deleteCount {
+                    screen.removeLast(deleteCount)
+                }
+                screen.append(newText)
+            }
+        }
+        return screen
+    }
+
     func testBasicCircumflex() {
         XCTAssertEqual(type("aa"), "â")
         XCTAssertEqual(type("ee"), "ê")
@@ -212,11 +231,24 @@ final class EngineTests: XCTestCase {
         engine.inputMethod = .telex
         engine.isSpellingCheckEnabled = true
 
-        // Without spelling restoration, "pos" + "t" would produce "pót" or "pótt"
-        // With spelling restoration, it restores "post"
+        // Real-time tests
         XCTAssertEqual(type("post"), "post")
+        XCTAssertEqual(type("good"), "good")
+        XCTAssertEqual(type("look"), "look")
+        XCTAssertEqual(type("feel"), "feel")
+        XCTAssertEqual(type("need"), "need")
+        XCTAssertEqual(type("class"), "class")
+        XCTAssertEqual(type("print"), "print")
+        XCTAssertEqual(type("clear"), "clear")
+        XCTAssertEqual(type("free"), "free")
 
-        // Invalid tone on stop consonant: "mac" + "f" (c can only have acute or heavy, not grave)
-        XCTAssertEqual(type("macf"), "macf")
+        // Word boundary tests with spaces (common words like is, as, this, for, see, test...)
+        XCTAssertEqual(typeSentence("this is a good test "), "this is a good test ")
+        XCTAssertEqual(typeSentence("as if of or for "), "as if of or for ")
+        XCTAssertEqual(typeSentence("see feel need keep look book "), "see feel need keep look book ")
+        XCTAssertEqual(typeSentence("const return system server "), "const return system server ")
+
+        // Ensure Vietnamese sentences STILL type 100% correctly!
+        XCTAssertEqual(typeSentence("tieengs vieetj dduwowngf muwngf "), "tiếng việt đường mừng ")
     }
 }

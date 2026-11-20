@@ -88,13 +88,26 @@ public class MoriEngine {
             return .passThrough
         }
 
-        // Delimiters (Space, Enter, Punctuation) commit buffer and check for macros
+        // Delimiters (Space, Enter, Punctuation) commit buffer, check for macros,
+        // and perform smart English restoration for words like "is", "as", "this", "for", "see"...
         if isDelimiter(char) {
+            // 1. Macro expansion
             if macroEngine.isEnabled, let macroReplacement = macroEngine.lookup(word: currentWord) {
                 let deleteCount = currentWord.count
                 reset()
                 return .replace(deleteCount: deleteCount, text: macroReplacement + String(char))
             }
+
+            // 2. Smart English Auto-Restore on word boundary
+            if isSpellingCheckEnabled && currentWord != rawWord && !currentWord.isEmpty {
+                if SpellingChecker.isLikelyEnglishWord(currentWord: currentWord, rawWord: rawWord) {
+                    let deleteCount = currentWord.count
+                    let restored = rawWord
+                    reset()
+                    return .replace(deleteCount: deleteCount, text: restored + String(char))
+                }
+            }
+
             reset()
             return .passThrough
         }
@@ -103,6 +116,15 @@ public class MoriEngine {
 
         switch inputMethod {
         case .telex, .simpleTelex:
+            // Real-time check: if rawWord starts with non-Vietnamese consonant cluster (e.g. "cl", "fr", "st", "sp", "pr", "pl")
+            // or starts with a foreign letter (f, j, z) -> bypass Telex modifications!
+            if isSpellingCheckEnabled {
+                if SpellingChecker.hasInvalidInitialCluster(rawWord) || SpellingChecker.hasForeignInitialOrChar(rawWord) {
+                    currentWord.append(char)
+                    return .passThrough
+                }
+            }
+
             // 1. Try diacritics (aa -> â, aw -> ă, dd -> đ, [ -> ơ, ] -> ư, etc.)
             if let transformed = DiacriticTransform.tryTransformVowel(
                 word: currentWord,
@@ -122,11 +144,6 @@ public class MoriEngine {
                 char: char,
                 toneStyle: toneStyle
             ) {
-                // If spelling check is on, verify stop consonants (c, ch, p, t can only have acute or heavy)
-                if isSpellingCheckEnabled && !SpellingChecker.isValidVietnameseSyllable(transformed) {
-                    currentWord.append(char)
-                    return .passThrough
-                }
                 let deleteCount = currentWord.count
                 currentWord = transformed
                 return .replace(deleteCount: deleteCount, text: transformed)
@@ -134,11 +151,23 @@ public class MoriEngine {
 
             // 3. Normal character typing
             if char.isLetter {
-                // Check if raw keystrokes form an invalid cluster (like "post", "text", "fast")
-                if isSpellingCheckEnabled && !SpellingChecker.isValidVietnameseSyllable(rawWord) {
-                    let deleteCount = currentWord.count
-                    currentWord = rawWord
-                    return .replace(deleteCount: deleteCount, text: rawWord)
+                let candidate = currentWord + String(char)
+
+                // Real-time check: if appending this letter forms an invalid coda (e.g. "look", "good", "feel")
+                // or forms an invalid cluster on rawWord (e.g. "post", "text") -> restore raw English word!
+                if isSpellingCheckEnabled && currentWord != rawWord {
+                    if SpellingChecker.hasInvalidCoda(candidate) {
+                        let deleteCount = currentWord.count
+                        currentWord = rawWord
+                        return .replace(deleteCount: deleteCount, text: rawWord)
+                    }
+                    for cluster in SpellingChecker.invalidFinalClusters {
+                        if rawWord.lowercased().hasSuffix(cluster) {
+                            let deleteCount = currentWord.count
+                            currentWord = rawWord
+                            return .replace(deleteCount: deleteCount, text: rawWord)
+                        }
+                    }
                 }
 
                 currentWord.append(char)

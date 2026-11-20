@@ -93,7 +93,7 @@ public final class AppSettings: ObservableObject {
         let toneStyle = ToneStyle(rawValue: toneRaw) ?? .modern
         let spelling = UserDefaults.standard.object(forKey: Keys.isSpellingCheckEnabled) as? Bool ?? true
         let wAtStart = UserDefaults.standard.object(forKey: Keys.wAtWordStartAsW) as? Bool ?? true
-        let macroOn = UserDefaults.standard.object(forKey: Keys.isMacroEnabled) as? Bool ?? true
+        let macroOn = UserDefaults.standard.object(forKey: Keys.isMacroEnabled) as? Bool ?? false
         let shortcutRaw = UserDefaults.standard.string(forKey: Keys.shortcutOption) ?? ShortcutOption.controlSpace.rawValue
         let shortcut = ShortcutOption(rawValue: shortcutRaw) ?? .controlSpace
 
@@ -106,20 +106,13 @@ public final class AppSettings: ObservableObject {
         self.shortcutOption = shortcut
         self.launchAtLogin = LaunchAtLoginHelper.isEnabled
 
-        // Load Macro Items from UserDefaults or default
+        // Load Macro Items from UserDefaults (empty by default to avoid unexpected expansions like 'vn' -> 'Việt Nam')
         if let data = UserDefaults.standard.data(forKey: Keys.macroItems),
            let decoded = try? JSONDecoder().decode([MacroItem].self, from: data) {
-            self.macroItems = decoded
+            // Filter out default "vn" -> "Việt Nam" if it was populated from legacy default
+            self.macroItems = decoded.filter { !($0.shortcut.lowercased() == "vn" && $0.replacement == "Việt Nam") }
         } else {
-            self.macroItems = [
-                MacroItem(shortcut: "vn", replacement: "Việt Nam"),
-                MacroItem(shortcut: "hn", replacement: "Hà Nội"),
-                MacroItem(shortcut: "hcm", replacement: "Hồ Chí Minh"),
-                MacroItem(shortcut: "dc", replacement: "được"),
-                MacroItem(shortcut: "ko", replacement: "không"),
-                MacroItem(shortcut: "ng", replacement: "người"),
-                MacroItem(shortcut: "k", replacement: "không")
-            ]
+            self.macroItems = []
         }
 
         // Synchronize with the underlying engine immediately

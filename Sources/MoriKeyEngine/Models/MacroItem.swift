@@ -13,23 +13,15 @@ public struct MacroItem: Identifiable, Codable, Equatable {
 }
 
 public final class MacroEngine {
-    public var isEnabled: Bool = true
-    public var macros: [String: String] = [
-        "vn": "Việt Nam",
-        "hn": "Hà Nội",
-        "hcm": "Hồ Chí Minh",
-        "dc": "được",
-        "ko": "không",
-        "ng": "người",
-        "k": "không",
-        "cg": "con gái",
-        "ct": "chúng ta"
-    ]
+    public var isEnabled: Bool = false
+    public var macros: [String: String] = [:]
 
-    public init(isEnabled: Bool = true, macros: [String: String]? = nil) {
+    public init(isEnabled: Bool = false, macros: [String: String]? = nil) {
         self.isEnabled = isEnabled
         if let macros = macros {
             self.macros = macros
+        } else {
+            self.macros = [:]
         }
     }
 

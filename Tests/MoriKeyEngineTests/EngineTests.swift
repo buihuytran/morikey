@@ -191,6 +191,7 @@ final class EngineTests: XCTestCase {
     func testMacroShortcuts() {
         engine.inputMethod = .telex
         engine.macroEngine.isEnabled = true
+        engine.macroEngine.macros["vn"] = "Việt Nam"
         
         // Typing "vn" + space -> replaces with "Việt Nam "
         engine.reset()

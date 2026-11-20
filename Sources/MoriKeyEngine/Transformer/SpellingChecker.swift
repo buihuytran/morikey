@@ -177,10 +177,26 @@ public struct SpellingChecker {
         return true
     }
 
+    /// Common, native Vietnamese words that must NEVER be restored to English
+    private static let protectedVietnameseWords: Set<String> = [
+        "ít", "cả", "cơ", "bơ", "tơ", "lơ", "mã", "sĩ", "bả", "há", "hí", "hát",
+        "toán", "toản", "chúc", "tiếp", "đường", "buổi", "sáng", "mừng", "việt", "tiếng"
+    ]
+
+    public static func isProtectedVietnameseWord(_ word: String) -> Bool {
+        return protectedVietnameseWords.contains(word.lowercased())
+    }
+
     /// Determines if a completed word (or raw keystroke sequence) is an English word
     public static func isLikelyEnglishWord(currentWord: String, rawWord: String) -> Bool {
         let cleanRaw = rawWord.lowercased()
         let cleanCurrent = currentWord.lowercased()
+
+        // If the current word is an explicit, native Vietnamese word (like "ít", "cả", "toán"...),
+        // NEVER restore it to English!
+        if isProtectedVietnameseWord(cleanCurrent) {
+            return false
+        }
 
         // 1. Direct match with English dictionary words (is, as, us, if, of, or, this, see, good, look, morning...)
         if EnglishDictionary.isCommonEnglishWord(cleanRaw) {

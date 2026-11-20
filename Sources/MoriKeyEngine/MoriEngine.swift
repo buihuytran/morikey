@@ -178,7 +178,9 @@ public class MoriEngine {
                     }
                     // 3. rawWord is a common English word (e.g. "good", "morn", "morning", "post", "test", "cost")
                     else if EnglishDictionary.isCommonEnglishWord(rawWord) {
-                        shouldRestore = true
+                        if !SpellingChecker.isProtectedVietnameseWord(directCandidate) {
+                            shouldRestore = true
+                        }
                     }
 
                     if shouldRestore {

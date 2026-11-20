@@ -10,14 +10,14 @@ public struct EnglishDictionary {
 
         // 3-letter words
         "the", "and", "for", "are", "but", "not", "you", "all", "any", "can",
-        "had", "her", "was", "one", "our", "out", "day", "get", "has", "him",
-        "his", "how", "man", "new", "now", "old", "see", "two", "way", "who",
-        "boy", "did", "its", "let", "put", "say", "she", "too", "use", "bad",
+        "had", "her", "was", "one", "our", "out", "get", "him",
+        "how", "man", "new", "now", "old", "see", "two", "way", "who",
+        "boy", "did", "let", "put", "she", "too", "use", "bad",
         "far", "few", "big", "end", "set", "run", "try", "ask", "men", "lot",
-        "sun", "war", "job", "eye", "sir", "god", "law", "car", "cat", "dog",
-        "row", "saw", "raw", "cow", "low", "few", "own", "red", "top", "arm",
-        "art", "bar", "box", "cut", "fat", "fit", "fun", "gas", "hit", "hot",
-        "key", "map", "net", "pay", "per", "sea", "son", "tax", "tea", "yes",
+        "sun", "war", "job", "eye", "sir", "god", "law", "cat", "dog",
+        "saw", "raw", "own", "red", "top", "arm",
+        "art", "cut", "fat", "fit", "fun", "hit", "hot",
+        "key", "map", "net", "pay", "per", "sea", "son", "tea", "yes",
         "yet", "app", "dev", "api", "git", "cli", "sdk", "log", "bug", "tab",
         "cmd", "tag", "url", "uri", "ssh", "ssl", "sql", "css", "dom",
 

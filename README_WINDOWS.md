@@ -141,6 +141,16 @@ ALL TESTS PASSED WITH 100% SUCCESS!
 
 ---
 
+## 💖 Ủng Hộ Phát Triển (Donate ☕)
+
+Nếu tiện ích hữu ích cho công việc của bạn, hãy ủng hộ tác giả một ly cà phê nhé! ❤️
+
+| 🇻🇳 Việt Nam (Chuyển khoản VietQR) | 🌍 Quốc Tế (PayPal) |
+| :---: | :---: |
+| <img src="Resources/vietqr.png" width="170" alt="VietQR" /><br><br>**Ngân hàng:** MBBank (Quân Đội)<br>**Số tài khoản:** `1907260788`<br>**Chủ tài khoản:** `BUI VAN LOI` | <br><br>[![Donate with PayPal](https://img.shields.io/badge/Donate-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.com/paypalme/buihuytran)<br><br>👉 [**Bấm vào đây để ủng hộ qua PayPal ($1.99)**](https://www.paypal.com/paypalme/buihuytran) |
+
+---
+
 ## 👤 Tác giả & Liên hệ
 
 - **Tác giả:** Bùi Văn Lợi

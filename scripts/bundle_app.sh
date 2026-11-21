@@ -31,6 +31,9 @@ cp "Resources/Info.plist" "$CONTENTS_DIR/Info.plist"
 if [ -f "Resources/AppIcon.icns" ]; then
     cp "Resources/AppIcon.icns" "$RESOURCES_DIR/AppIcon.icns"
 fi
+if [ -f "Resources/vietqr.png" ]; then
+    cp "Resources/vietqr.png" "$RESOURCES_DIR/vietqr.png"
+fi
 
 echo "🔏 Signing MoriKey.app with stable designated requirement..."
 codesign --force --deep --sign - --identifier "com.mori.morikey" -r='designated => identifier "com.mori.morikey"' "$APP_DIR"

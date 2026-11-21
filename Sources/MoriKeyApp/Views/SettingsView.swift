@@ -33,8 +33,14 @@ struct SettingsView: View {
                     Label("Giới thiệu", systemImage: "info.circle")
                 }
                 .tag(3)
+
+            donateTab
+                .tabItem {
+                    Label("Ủng hộ", systemImage: "heart.fill")
+                }
+                .tag(4)
         }
-        .frame(width: 500, height: 460)
+        .frame(width: 530, height: 490)
         .onAppear {
             hasAccessibility = AccessibilityHelper.isProcessTrusted()
         }
@@ -308,5 +314,104 @@ struct SettingsView: View {
             Spacer()
         }
         .padding()
+    }
+
+    // MARK: - Tab 5: Donate
+    private var donateTab: some View {
+        ScrollView {
+            VStack(spacing: 14) {
+                Text("💖 Ủng Hộ Phát Triển (Donate ☕)")
+                    .font(.title3)
+                    .fontWeight(.bold)
+
+                Text("Nếu MoriKey hữu ích cho công việc của bạn, hãy ủng hộ tác giả một ly cà phê nhé! ❤️")
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+
+                HStack(alignment: .top, spacing: 14) {
+                    // Việt Nam (VietQR)
+                    VStack(spacing: 8) {
+                        Text("🇻🇳 Việt Nam (VietQR)")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+
+                        if let path = Bundle.main.path(forResource: "vietqr", ofType: "png"),
+                           let nsImg = NSImage(contentsOfFile: path) {
+                            Image(nsImage: nsImg)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 150, height: 200)
+                                .cornerRadius(8)
+                        }
+
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("Ngân hàng: **MBBank**")
+                                .font(.caption)
+                            HStack(spacing: 4) {
+                                Text("STK: **1907260788**")
+                                    .font(.caption)
+                                Button {
+                                    NSPasteboard.general.clearContents()
+                                    NSPasteboard.general.setString("1907260788", forType: .string)
+                                } label: {
+                                    Image(systemName: "doc.on.doc")
+                                        .font(.caption2)
+                                }
+                                .buttonStyle(.borderless)
+                                .help("Sao chép số tài khoản")
+                            }
+                            Text("Chủ TK: **BUI VAN LOI**")
+                                .font(.caption)
+                        }
+                    }
+                    .padding(10)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.secondary.opacity(0.08))
+                    .cornerRadius(10)
+
+                    // Quốc Tế (PayPal)
+                    VStack(spacing: 12) {
+                        Text("🌍 Quốc Tế (PayPal)")
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+
+                        Spacer()
+
+                        Image(systemName: "creditcard.circle.fill")
+                            .font(.system(size: 44))
+                            .foregroundColor(.blue)
+
+                        Link(destination: URL(string: "https://www.paypal.com/paypalme/buihuytran")!) {
+                            HStack(spacing: 6) {
+                                Image(systemName: "heart.fill")
+                                    .foregroundColor(.pink)
+                                Text("Ủng hộ qua PayPal")
+                                    .fontWeight(.semibold)
+                            }
+                            .font(.caption)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 8)
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                        }
+
+                        Text("👉 Bấm để ủng hộ qua PayPal ($1.99)")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+
+                        Spacer()
+                    }
+                    .padding(10)
+                    .frame(maxWidth: .infinity, minHeight: 280)
+                    .background(Color.secondary.opacity(0.08))
+                    .cornerRadius(10)
+                }
+                .padding(.horizontal, 8)
+            }
+            .padding(.vertical, 8)
+        }
     }
 }

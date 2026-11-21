@@ -44,6 +44,17 @@
 #define ID_TXT_ABOUT_METHODS    3408
 #define ID_TXT_ABOUT_FEATURES   3409
 
+// Donate Tab
+#define ID_GRP_DONATE           3500
+#define ID_TXT_DONATE_DESC      3501
+#define ID_GRP_DONATE_VN        3502
+#define ID_TXT_DONATE_BANK      3503
+#define ID_TXT_DONATE_STK       3504
+#define ID_TXT_DONATE_NAME      3505
+#define ID_GRP_DONATE_INTL      3506
+#define ID_TXT_DONATE_INTL_DESC 3507
+#define ID_BTN_DONATE_PAYPAL    3508
+
 static const wchar_t* SETTINGS_CLASS = L"MoriKey_Settings_Class";
 
 static LRESULT CALLBACK SettingsWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
@@ -134,6 +145,8 @@ void SettingsDialog::createTabControls(HWND hWnd) {
     TabCtrl_InsertItem(m_hTab, 2, &tie);
     tie.pszText = (LPWSTR)L"Giới thiệu";
     TabCtrl_InsertItem(m_hTab, 3, &tie);
+    tie.pszText = (LPWSTR)L"Ủng hộ";
+    TabCtrl_InsertItem(m_hTab, 4, &tie);
 
     // Bottom buttons
     HWND hBtnApply = CreateWindowExW(
@@ -255,6 +268,34 @@ void SettingsDialog::createTabControls(HWND hWnd) {
 
     HWND hTxtFeat = CreateWindowExW(0, L"STATIC", L"Tính năng: Khôi phục tiếng Anh thông minh, Macro gõ tắt.", WS_CHILD | SS_LEFT, 50, 300, 400, 20, hWnd, (HMENU)ID_TXT_ABOUT_FEATURES, m_hInstance, NULL);
     SendMessage(hTxtFeat, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+    // --- Tab 4: Donate ---
+    HWND hGrpDonate = CreateWindowExW(0, L"BUTTON", L"💖 Ủng Hộ Phát Triển (Donate ☕)", WS_CHILD | BS_GROUPBOX, 30, 50, 445, 345, hWnd, (HMENU)ID_GRP_DONATE, m_hInstance, NULL);
+    SendMessage(hGrpDonate, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+    HWND hTxtDonateDesc = CreateWindowExW(0, L"STATIC", L"Nếu MoriKey hữu ích cho công việc của bạn, hãy ủng hộ tác giả một ly cà phê nhé! ❤️", WS_CHILD | SS_LEFT, 45, 75, 415, 36, hWnd, (HMENU)ID_TXT_DONATE_DESC, m_hInstance, NULL);
+    SendMessage(hTxtDonateDesc, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+    HWND hGrpDonateVN = CreateWindowExW(0, L"BUTTON", L"🇻🇳 Việt Nam (Chuyển khoản VietQR)", WS_CHILD | BS_GROUPBOX, 45, 120, 415, 110, hWnd, (HMENU)ID_GRP_DONATE_VN, m_hInstance, NULL);
+    SendMessage(hGrpDonateVN, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+    HWND hTxtBank = CreateWindowExW(0, L"STATIC", L"Ngân hàng: MBBank (Quân Đội)", WS_CHILD | SS_LEFT, 60, 145, 380, 20, hWnd, (HMENU)ID_TXT_DONATE_BANK, m_hInstance, NULL);
+    SendMessage(hTxtBank, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+    HWND hTxtSTK = CreateWindowExW(0, L"STATIC", L"Số tài khoản: 1907260788", WS_CHILD | SS_LEFT, 60, 170, 380, 20, hWnd, (HMENU)ID_TXT_DONATE_STK, m_hInstance, NULL);
+    SendMessage(hTxtSTK, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+    HWND hTxtName = CreateWindowExW(0, L"STATIC", L"Chủ tài khoản: BUI VAN LOI", WS_CHILD | SS_LEFT, 60, 195, 380, 20, hWnd, (HMENU)ID_TXT_DONATE_NAME, m_hInstance, NULL);
+    SendMessage(hTxtName, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+    HWND hGrpDonateIntl = CreateWindowExW(0, L"BUTTON", L"🌍 Quốc Tế (PayPal)", WS_CHILD | BS_GROUPBOX, 45, 240, 415, 120, hWnd, (HMENU)ID_GRP_DONATE_INTL, m_hInstance, NULL);
+    SendMessage(hGrpDonateIntl, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+    HWND hTxtIntlDesc = CreateWindowExW(0, L"STATIC", L"Ủng hộ qua cổng thanh toán quốc tế PayPal:", WS_CHILD | SS_LEFT, 60, 268, 380, 20, hWnd, (HMENU)ID_TXT_DONATE_INTL_DESC, m_hInstance, NULL);
+    SendMessage(hTxtIntlDesc, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+    HWND hBtnPaypal = CreateWindowExW(0, L"BUTTON", L"👉 Bấm vào đây để ủng hộ qua PayPal ($1.99)", WS_CHILD | BS_PUSHBUTTON, 60, 295, 350, 32, hWnd, (HMENU)ID_BTN_DONATE_PAYPAL, m_hInstance, NULL);
+    SendMessage(hBtnPaypal, WM_SETFONT, (WPARAM)hFont, TRUE);
 }
 
 void SettingsDialog::updateTabVisibility(int tabIndex) {
@@ -272,11 +313,18 @@ void SettingsDialog::updateTabVisibility(int tabIndex) {
         ID_TXT_ABOUT_ADDR, ID_TXT_ABOUT_EMAIL, ID_TXT_ABOUT_GITHUB,
         ID_TXT_ABOUT_DESC, ID_TXT_ABOUT_METHODS, ID_TXT_ABOUT_FEATURES
     };
+    // Tab 4 IDs
+    static const int tab4Ids[] = {
+        ID_GRP_DONATE, ID_TXT_DONATE_DESC, ID_GRP_DONATE_VN, ID_TXT_DONATE_BANK,
+        ID_TXT_DONATE_STK, ID_TXT_DONATE_NAME, ID_GRP_DONATE_INTL,
+        ID_TXT_DONATE_INTL_DESC, ID_BTN_DONATE_PAYPAL
+    };
 
     for (int id : tab0Ids) ShowWindow(GetDlgItem(m_hWnd, id), (tabIndex == 0) ? SW_SHOW : SW_HIDE);
     for (int id : tab1Ids) ShowWindow(GetDlgItem(m_hWnd, id), (tabIndex == 1) ? SW_SHOW : SW_HIDE);
     for (int id : tab2Ids) ShowWindow(GetDlgItem(m_hWnd, id), (tabIndex == 2) ? SW_SHOW : SW_HIDE);
     for (int id : tab3Ids) ShowWindow(GetDlgItem(m_hWnd, id), (tabIndex == 3) ? SW_SHOW : SW_HIDE);
+    for (int id : tab4Ids) ShowWindow(GetDlgItem(m_hWnd, id), (tabIndex == 4) ? SW_SHOW : SW_HIDE);
 
     InvalidateRect(m_hWnd, NULL, TRUE);
 }
@@ -386,6 +434,8 @@ LRESULT SettingsDialog::handleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
                 AppSettings::instance().save();
                 refreshMacroList();
             }
+        } else if (id == ID_BTN_DONATE_PAYPAL) {
+            ShellExecuteW(NULL, L"open", L"https://www.paypal.com/paypalme/buihuytran", NULL, NULL, SW_SHOWNORMAL);
         }
         break;
     }

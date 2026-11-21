@@ -5,6 +5,29 @@ public final class KeySimulator {
     public static let moriEventTag: Int64 = 0x4D4F5249 // ASCII for "MORI"
 
     private static let backspaceKeyCode: CGKeyCode = 0x33 // 51
+    private static let forwardDeleteKeyCode: CGKeyCode = 0x75 // 117 (Forward Delete)
+
+    /// Replaces `deleteCount` characters on screen with `text`.
+    /// When `fixBrowserAutocomplete` is true, sends Forward Delete (0x75) first to cancel/clear inline autocomplete suggestions in browsers (Safari, Chrome...).
+    public static func replace(deleteCount: Int, text: String, fixBrowserAutocomplete: Bool = false) {
+        guard deleteCount > 0 || !text.isEmpty else { return }
+
+        let source = CGEventSource(stateID: .hidSystemState)
+
+        if fixBrowserAutocomplete {
+            if let delDown = CGEvent(keyboardEventSource: source, virtualKey: forwardDeleteKeyCode, keyDown: true) {
+                delDown.setIntegerValueField(.eventSourceUserData, value: moriEventTag)
+                delDown.post(tap: .cghidEventTap)
+            }
+            if let delUp = CGEvent(keyboardEventSource: source, virtualKey: forwardDeleteKeyCode, keyDown: false) {
+                delUp.setIntegerValueField(.eventSourceUserData, value: moriEventTag)
+                delUp.post(tap: .cghidEventTap)
+            }
+        }
+
+        sendBackspaces(count: deleteCount)
+        sendString(text)
+    }
 
     /// Sends backspaces to delete `count` characters on screen
     public static func sendBackspaces(count: Int) {

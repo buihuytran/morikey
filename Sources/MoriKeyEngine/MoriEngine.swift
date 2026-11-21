@@ -165,7 +165,7 @@ public class MoriEngine {
                 let candidate = ToneRule.repositionTone(in: directCandidate, toneStyle: toneStyle)
 
                 // Real-time check: if appending this letter forms an English word or non-Vietnamese structure:
-                if isSpellingCheckEnabled && currentWord != rawWord {
+                if isSpellingCheckEnabled && directCandidate != rawWord {
                     var shouldRestore = false
 
                     // 1. Candidate has an invalid Vietnamese coda (e.g. "gôd", "lôk", "fêl", "nêd", "wỏd", "cảd")

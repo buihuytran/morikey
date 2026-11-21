@@ -283,5 +283,20 @@ final class EngineTests: XCTestCase {
         XCTAssertEqual(typeSentence("awn its cowm "), "ăn ít cơm ")
         XCTAssertEqual(typeSentence("its nhaast "), "ít nhất ")
         XCTAssertEqual(typeSentence("chuts its "), "chút ít ")
+
+        // 8. Test natural pass-through for English words without diacritics (like "in", "on", "at")
+        engine.reset()
+        let a_i = engine.process(char: "i")
+        XCTAssertEqual(a_i, .passThrough)
+        let a_n = engine.process(char: "n")
+        XCTAssertEqual(a_n, .passThrough)
+        XCTAssertEqual(engine.currentWord, "in")
+
+        engine.reset()
+        let a_o = engine.process(char: "o")
+        XCTAssertEqual(a_o, .passThrough)
+        let a_on_n = engine.process(char: "n")
+        XCTAssertEqual(a_on_n, .passThrough)
+        XCTAssertEqual(engine.currentWord, "on")
     }
 }

@@ -181,8 +181,8 @@ public final class KeyboardInterceptor {
             return Unmanaged.passRetained(event)
 
         case .replace(let deleteCount, let text):
-            KeySimulator.sendBackspaces(count: deleteCount)
-            KeySimulator.sendString(text)
+            let isBrowser = AppSettings.shared.fixBrowserSuggestions && AccessibilityHelper.isFrontmostAppBrowser
+            KeySimulator.replace(deleteCount: deleteCount, text: text, fixBrowserAutocomplete: isBrowser)
             return nil
         }
     }

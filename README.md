@@ -1,8 +1,8 @@
-# MoriKey 🇻🇳 - Bộ gõ Tiếng Việt Native cho macOS
+# MoriKey 🇻🇳 - Bộ gõ Tiếng Việt Native cho macOS & Windows
 
-**MoriKey** là phần mềm bộ gõ tiếng Việt hiện đại, nhẹ, viết 100% bằng Swift và SwiftUI cho macOS (hỗ trợ tối ưu Apple Silicon M1/M2/M3/M4 và Intel). 
-
-MoriKey chạy trực tiếp trên thanh menu bar (Status Bar) bằng cơ chế **CGEventTap (Trợ năng / Accessibility)** tương tự kiến trúc của EVKey và OpenKey, mang lại tốc độ phản hồi cực nhanh, không phụ thuộc vào hệ thống Input Sources phức tạp của macOS và dễ dàng tuỳ biến giao diện.
+**MoriKey** là phần mềm bộ gõ tiếng Việt hiện đại, nhẹ:
+- **macOS**: Viết 100% bằng Swift và SwiftUI, chạy trực tiếp trên Menu Bar qua CGEventTap.
+- **Windows**: Viết 100% bằng C++17 và Win32 API thuần (không cần runtime, tương tự UniKey / EVKey), chạy tại Khay hệ thống (System Tray) qua `SetWindowsHookEx`. Xem chi tiết tại [README_WINDOWS.md](file:///Users/macbook/Downloads/UNGDUNG/morikey_windows/README_WINDOWS.md).
 
 ---
 
@@ -114,4 +114,14 @@ Dự án được thiết kế theo module rất dễ mở rộng:
 - **Thêm kiểu gõ VNI**: Thêm logic map phím số `1..9` vào thư mục `MoriKeyEngine/Transformer/`.
 - **Bảng gõ tắt (Macro / Shortcuts)**: Thêm Dictionary lưu trữ từ viết tắt trong `MoriEngine`.
 - **Tự động khôi phục từ tiếng Anh (Spelling check)**: Kiểm tra các tiền tố/hậu tố không tồn tại trong tiếng Việt để tự động phục hồi chữ tiếng Anh.
+
+---
+
+## 👤 Tác giả & Liên hệ
+
+- **Tác giả:** Bùi Văn Lợi
+- **Địa chỉ:** Kim Bôi - Hòa Bình
+- **Email:** [buihuytran.com@gmail.com](mailto:buihuytran.com@gmail.com)
+- **GitHub:** [https://github.com/buihuytran](https://github.com/buihuytran)
+
 

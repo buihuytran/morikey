@@ -18,6 +18,7 @@ public final class AppSettings: ObservableObject {
         static let toneStyle = "mori_tone_style"
         static let isSpellingCheckEnabled = "mori_spelling_check"
         static let wAtWordStartAsW = "mori_w_at_start_as_w"
+        static let fixBrowserSuggestions = "mori_fix_browser_suggestions"
         static let isMacroEnabled = "mori_macro_enabled"
         static let macroItems = "mori_macro_items_json"
         static let shortcutOption = "mori_shortcut_option"
@@ -59,6 +60,12 @@ public final class AppSettings: ObservableObject {
         }
     }
 
+    @Published public var fixBrowserSuggestions: Bool {
+        didSet {
+            UserDefaults.standard.set(fixBrowserSuggestions, forKey: Keys.fixBrowserSuggestions)
+        }
+    }
+
     @Published public var isMacroEnabled: Bool {
         didSet {
             UserDefaults.standard.set(isMacroEnabled, forKey: Keys.isMacroEnabled)
@@ -93,6 +100,7 @@ public final class AppSettings: ObservableObject {
         let toneStyle = ToneStyle(rawValue: toneRaw) ?? .modern
         let spelling = UserDefaults.standard.object(forKey: Keys.isSpellingCheckEnabled) as? Bool ?? true
         let wAtStart = UserDefaults.standard.object(forKey: Keys.wAtWordStartAsW) as? Bool ?? true
+        let fixBrowser = UserDefaults.standard.object(forKey: Keys.fixBrowserSuggestions) as? Bool ?? true
         let macroOn = UserDefaults.standard.object(forKey: Keys.isMacroEnabled) as? Bool ?? false
         let shortcutRaw = UserDefaults.standard.string(forKey: Keys.shortcutOption) ?? ShortcutOption.controlSpace.rawValue
         let shortcut = ShortcutOption(rawValue: shortcutRaw) ?? .controlSpace
@@ -102,6 +110,7 @@ public final class AppSettings: ObservableObject {
         self.toneStyle = toneStyle
         self.isSpellingCheckEnabled = spelling
         self.wAtWordStartAsW = wAtStart
+        self.fixBrowserSuggestions = fixBrowser
         self.isMacroEnabled = macroOn
         self.shortcutOption = shortcut
         self.launchAtLogin = LaunchAtLoginHelper.isEnabled

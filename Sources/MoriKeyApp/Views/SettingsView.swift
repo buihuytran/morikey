@@ -146,6 +146,16 @@ struct SettingsView: View {
                             .foregroundColor(.secondary)
                     }
                 }
+
+                Toggle(isOn: $settings.fixBrowserSuggestions) {
+                    VStack(alignment: .leading) {
+                        Text("Sửa lỗi dấu khi gợi ý (Trình duyệt Safari, Chrome...)")
+                            .fontWeight(.medium)
+                        Text("Khắc phục hiện tượng lặp chữ hoặc sai dấu trên thanh địa chỉ URL của trình duyệt")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
             }
         }
         .formStyle(.grouped)
@@ -244,6 +254,38 @@ struct SettingsView: View {
                         .fontWeight(.medium)
                 }
                 HStack {
+                    Text("Tác giả:")
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Text("Bùi Văn Lợi")
+                        .fontWeight(.semibold)
+                }
+                HStack {
+                    Text("Địa chỉ:")
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Text("Kim Bôi - Hòa Bình")
+                        .fontWeight(.medium)
+                }
+                HStack {
+                    Text("Email:")
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Link("buihuytran.com@gmail.com", destination: URL(string: "mailto:buihuytran.com@gmail.com")!)
+                        .fontWeight(.medium)
+                }
+                HStack {
+                    Text("GitHub:")
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Link("github.com/buihuytran", destination: URL(string: "https://github.com/buihuytran")!)
+                        .fontWeight(.medium)
+                }
+
+                Divider()
+                    .padding(.vertical, 4)
+
+                HStack {
                     Text("Kiến trúc:")
                         .foregroundColor(.secondary)
                     Spacer()
@@ -258,7 +300,7 @@ struct SettingsView: View {
                         .fontWeight(.medium)
                 }
             }
-            .frame(width: 280)
+            .frame(width: 320)
             .padding()
             .background(Color.secondary.opacity(0.08))
             .cornerRadius(10)

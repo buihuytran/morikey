@@ -435,7 +435,7 @@ LRESULT SettingsDialog::handleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
                 refreshMacroList();
             }
         } else if (id == ID_BTN_DONATE_PAYPAL) {
-            ShellExecuteW(NULL, L"open", L"https://www.paypal.com/paypalme/buihuytran", NULL, NULL, SW_SHOWNORMAL);
+            ShellExecuteW(NULL, L"open", L"https://www.paypal.com/paypalme/18008198/1.99", NULL, NULL, SW_SHOWNORMAL);
         }
         break;
     }

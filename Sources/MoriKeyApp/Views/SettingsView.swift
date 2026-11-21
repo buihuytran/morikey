@@ -383,7 +383,7 @@ struct SettingsView: View {
                             .font(.system(size: 44))
                             .foregroundColor(.blue)
 
-                        Link(destination: URL(string: "https://www.paypal.com/paypalme/buihuytran")!) {
+                        Link(destination: URL(string: "https://www.paypal.com/paypalme/18008198/1.99")!) {
                             HStack(spacing: 6) {
                                 Image(systemName: "heart.fill")
                                     .foregroundColor(.pink)

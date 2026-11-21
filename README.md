@@ -169,7 +169,7 @@ Nếu tiện ích hữu ích cho công việc của bạn, hãy ủng hộ tác 
 
 | 🇻🇳 Việt Nam (Chuyển khoản VietQR) | 🌍 Quốc Tế (PayPal) |
 | :---: | :---: |
-| <img src="Resources/vietqr.png" width="170" alt="VietQR" /><br><br>**Ngân hàng:** MBBank (Quân Đội)<br>**Số tài khoản:** `1907260788`<br>**Chủ tài khoản:** `BUI VAN LOI` | <br><br>[![Donate with PayPal](https://img.shields.io/badge/Donate-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.com/paypalme/buihuytran)<br><br>👉 [**Bấm vào đây để ủng hộ qua PayPal ($1.99)**](https://www.paypal.com/paypalme/buihuytran) |
+| <img src="Resources/vietqr.png" width="170" alt="VietQR" /><br><br>**Ngân hàng:** MBBank (Quân Đội)<br>**Số tài khoản:** `1907260788`<br>**Chủ tài khoản:** `BUI VAN LOI` | <br><br>[![Donate with PayPal](https://img.shields.io/badge/Donate-PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://www.paypal.com/paypalme/18008198/1.99)<br><br>👉 [**Bấm vào đây để ủng hộ qua PayPal ($1.99)**](https://www.paypal.com/paypalme/18008198/1.99) |
 
 ---
 

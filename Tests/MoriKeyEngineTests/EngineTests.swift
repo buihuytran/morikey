@@ -274,6 +274,13 @@ final class EngineTests: XCTestCase {
         // 6. Ensure Vietnamese sentences STILL type 100% correctly!
         XCTAssertEqual(typeSentence("tieengs vieetj dduwowngf muwngf "), "tiếng việt đường mừng ")
         XCTAssertEqual(typeSentence("chusc muwngf buooir sasng "), "chúc mừng buổi sáng ")
+        XCTAssertEqual(type("own"), "ơn")
+        XCTAssertEqual(typeSentence("carm own banj "), "cảm ơn bạn ")
+        XCTAssertEqual(typeSentence("own nghiax "), "ơn nghĩa ")
+        XCTAssertEqual(type("cown"), "cơn")
+        XCTAssertEqual(type("sown"), "sơn")
+        XCTAssertEqual(type("hown"), "hơn")
+        XCTAssertEqual(type("ddown"), "đơn")
 
         // 7. Ensure Vietnamese words like "ít" type 100% correctly both standalone and in sentences!
         XCTAssertEqual(type("its"), "ít")

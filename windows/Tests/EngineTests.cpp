@@ -274,6 +274,13 @@ public:
 
         ASSERT_EQUAL(typeSentence(L"tieengs vieetj dduwowngf muwngf "), L"tiếng việt đường mừng ");
         ASSERT_EQUAL(typeSentence(L"chusc muwngf buooir sasng "), L"chúc mừng buổi sáng ");
+        ASSERT_EQUAL(type(L"own"), L"ơn");
+        ASSERT_EQUAL(typeSentence(L"carm own banj "), L"cảm ơn bạn ");
+        ASSERT_EQUAL(typeSentence(L"own nghiax "), L"ơn nghĩa ");
+        ASSERT_EQUAL(type(L"cown"), L"cơn");
+        ASSERT_EQUAL(type(L"sown"), L"sơn");
+        ASSERT_EQUAL(type(L"hown"), L"hơn");
+        ASSERT_EQUAL(type(L"ddown"), L"đơn");
 
         ASSERT_EQUAL(type(L"its"), L"ít");
         ASSERT_EQUAL(type(L"ist"), L"ít");

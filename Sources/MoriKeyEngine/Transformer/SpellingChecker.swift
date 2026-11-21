@@ -180,7 +180,8 @@ public struct SpellingChecker {
     /// Common, native Vietnamese words that must NEVER be restored to English
     private static let protectedVietnameseWords: Set<String> = [
         "ít", "cả", "cơ", "bơ", "tơ", "lơ", "mã", "sĩ", "bả", "há", "hí", "hát",
-        "toán", "toản", "chúc", "tiếp", "đường", "buổi", "sáng", "mừng", "việt", "tiếng"
+        "toán", "toản", "chúc", "tiếp", "đường", "buổi", "sáng", "mừng", "việt", "tiếng",
+        "ơn", "cơn", "sơn", "hơn", "đơn", "rơm"
     ]
 
     public static func isProtectedVietnameseWord(_ word: String) -> Bool {

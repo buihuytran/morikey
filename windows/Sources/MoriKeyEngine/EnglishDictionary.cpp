@@ -21,7 +21,7 @@ static const std::unordered_set<std::wstring> s_commonWords = {
     L"boy", L"did", L"let", L"put", L"she", L"too", L"use", L"bad",
     L"far", L"few", L"big", L"end", L"set", L"run", L"try", L"ask", L"men", L"lot",
     L"sun", L"war", L"job", L"eye", L"sir", L"god", L"law", L"cat", L"dog",
-    L"saw", L"raw", L"own", L"red", L"top", L"arm",
+    L"saw", L"raw", L"red", L"top", L"arm",
     L"art", L"cut", L"fat", L"fit", L"fun", L"hit", L"hot",
     L"key", L"map", L"net", L"pay", L"per", L"sea", L"son", L"tea", L"yes",
     L"yet", L"app", L"dev", L"api", L"git", L"cli", L"sdk", L"log", L"bug", L"tab",

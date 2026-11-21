@@ -52,7 +52,8 @@ static const std::vector<std::wstring> s_invalidClusters = {
 
 static const std::unordered_set<std::wstring> s_protectedVietnameseWords = {
     L"ít", L"cả", L"cơ", L"bơ", L"tơ", L"lơ", L"mã", L"sĩ", L"bả", L"há", L"hí", L"hát",
-    L"toán", L"toản", L"chúc", L"tiếp", L"đường", L"buổi", L"sáng", L"mừng", L"việt", L"tiếng"
+    L"toán", L"toản", L"chúc", L"tiếp", L"đường", L"buổi", L"sáng", L"mừng", L"việt", L"tiếng",
+    L"ơn", L"cơn", L"sơn", L"hơn", L"đơn", L"rơm"
 };
 
 const std::vector<std::wstring>& SpellingChecker::getInvalidClusters() {

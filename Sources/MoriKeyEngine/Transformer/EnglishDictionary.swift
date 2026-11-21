@@ -15,7 +15,7 @@ public struct EnglishDictionary {
         "boy", "did", "let", "put", "she", "too", "use", "bad",
         "far", "few", "big", "end", "set", "run", "try", "ask", "men", "lot",
         "sun", "war", "job", "eye", "sir", "god", "law", "cat", "dog",
-        "saw", "raw", "own", "red", "top", "arm",
+        "saw", "raw", "red", "top", "arm",
         "art", "cut", "fat", "fit", "fun", "hit", "hot",
         "key", "map", "net", "pay", "per", "sea", "son", "tea", "yes",
         "yet", "app", "dev", "api", "git", "cli", "sdk", "log", "bug", "tab",

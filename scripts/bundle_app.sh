@@ -28,6 +28,9 @@ mkdir -p "$RESOURCES_DIR"
 
 cp "$BIN_PATH" "$MACOS_DIR/MoriKey"
 cp "Resources/Info.plist" "$CONTENTS_DIR/Info.plist"
+if [ -f "Resources/AppIcon.icns" ]; then
+    cp "Resources/AppIcon.icns" "$RESOURCES_DIR/AppIcon.icns"
+fi
 
 echo "🔏 Signing MoriKey.app with stable designated requirement..."
 codesign --force --deep --sign - --identifier "com.mori.morikey" -r='designated => identifier "com.mori.morikey"' "$APP_DIR"

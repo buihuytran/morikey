@@ -34,6 +34,12 @@ build:
 app:
 	./scripts/bundle_app.sh release
 
+install: app
+	@echo "📦 Cài đặt MoriKey vào /Applications..."
+	@rm -rf /Applications/MoriKey.app
+	@cp -R build/MoriKey.app /Applications/
+	@echo "✅ Đã cài đặt MoriKey vào thư mục Applications! Ứng dụng đã xuất hiện trong Launchpad."
+
 debug-app:
 	./scripts/bundle_app.sh debug
 

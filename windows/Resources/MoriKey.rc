@@ -34,3 +34,6 @@ END
 // Application Manifest
 IDR_MANIFEST RT_MANIFEST "MoriKey.manifest"
 
+// Application Icon
+IDI_APP_ICON ICON "app.ico"
+

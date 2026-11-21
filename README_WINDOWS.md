@@ -1,5 +1,7 @@
 # MoriKey cho Windows 🇻🇳 (Native C++ / Win32 API)
 
+[![Download MoriKey.exe](https://img.shields.io/badge/Tải%20về-MoriKey.exe%20(v1.0.0)-success?style=for-the-badge&logo=windows)](https://github.com/buihuytran/morikey/releases/latest/download/MoriKey.exe)
+
 **MoriKey cho Windows** là phiên bản dành riêng cho hệ điều hành Windows (Windows 10, Windows 11, Windows 7/8), được viết **100% bằng C++17 và Win32 API thuần**, mang lại trải nghiệm tương tự UniKey, OpenKey và EVKey:
 - 🚀 **Siêu nhẹ & Native**: Kích thước file `.exe` chỉ khoảng ~1MB, không cần cài đặt .NET Framework / Runtime, không tốn RAM / CPU.
 - 🎯 **Kiến trúc Hook cấp thấp**: Sử dụng `SetWindowsHookEx(WH_KEYBOARD_LL)` và `SendInput`, tương thích mượt mà với hầu hết các ứng dụng văn phòng, trình duyệt, lập trình (VS Code, Visual Studio, Word, Excel, Chrome, Edge, Telegram, Zalo...).

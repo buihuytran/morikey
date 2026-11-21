@@ -1,8 +1,20 @@
 # MoriKey 🇻🇳 - Bộ gõ Tiếng Việt Native cho macOS & Windows
 
+[![Release](https://img.shields.io/github/v/release/buihuytran/morikey?label=Bản%20phát%20hành&color=success)](https://github.com/buihuytran/morikey/releases/latest)
+[![Platform](https://img.shields.io/badge/Hỗ%20trợ-macOS%20%7C%20Windows-blue)](https://github.com/buihuytran/morikey/releases/latest)
+
 **MoriKey** là phần mềm bộ gõ tiếng Việt hiện đại, nhẹ:
 - **macOS**: Viết 100% bằng Swift và SwiftUI, chạy trực tiếp trên Menu Bar qua CGEventTap.
 - **Windows**: Viết 100% bằng C++17 và Win32 API thuần (không cần runtime, tương tự UniKey / EVKey), chạy tại Khay hệ thống (System Tray) qua `SetWindowsHookEx`. Xem chi tiết tại [README_WINDOWS.md](file:///Users/macbook/Downloads/UNGDUNG/morikey_windows/README_WINDOWS.md).
+
+---
+
+## 📥 Tải về ứng dụng (Downloads)
+
+| Hệ điều hành | File tải về | Hướng dẫn sử dụng |
+| :--- | :--- | :--- |
+| **Windows** (10 / 11 / 7) | [**Tải MoriKey.exe**](https://github.com/buihuytran/morikey/releases/latest/download/MoriKey.exe) | File chạy ngay (~1.1 MB), không cần cài đặt. |
+| **macOS** (Apple Silicon & Intel) | [**Tải MoriKey-macOS.zip**](https://github.com/buihuytran/morikey/releases/latest/download/MoriKey-macOS.zip) | Giải nén kéo vào Applications để chạy. |
 
 ---
 

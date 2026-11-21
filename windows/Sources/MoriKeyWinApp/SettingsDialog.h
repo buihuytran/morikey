@@ -20,6 +20,7 @@ private:
     HWND m_hWnd = NULL;
     HWND m_hTab = NULL;
     HINSTANCE m_hInstance = NULL;
+    HFONT m_hTitleFont = NULL;
 
     // Controls on tabs
     void createTabControls(HWND hWnd);

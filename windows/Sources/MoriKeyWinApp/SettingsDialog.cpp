@@ -32,6 +32,18 @@
 #define ID_BTN_MACRO_ADD        3305
 #define ID_BTN_MACRO_DEL        3306
 
+// About Tab
+#define ID_GRP_ABOUT            3400
+#define ID_TXT_ABOUT_TITLE      3401
+#define ID_TXT_ABOUT_VER        3402
+#define ID_TXT_ABOUT_AUTHOR     3403
+#define ID_TXT_ABOUT_ADDR       3404
+#define ID_TXT_ABOUT_EMAIL      3405
+#define ID_TXT_ABOUT_GITHUB     3406
+#define ID_TXT_ABOUT_DESC       3407
+#define ID_TXT_ABOUT_METHODS    3408
+#define ID_TXT_ABOUT_FEATURES   3409
+
 static const wchar_t* SETTINGS_CLASS = L"MoriKey_Settings_Class";
 
 static LRESULT CALLBACK SettingsWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
@@ -46,6 +58,10 @@ SettingsDialog& SettingsDialog::instance() {
 SettingsDialog::SettingsDialog() {}
 
 SettingsDialog::~SettingsDialog() {
+    if (m_hTitleFont) {
+        DeleteObject(m_hTitleFont);
+        m_hTitleFont = NULL;
+    }
     hide();
 }
 
@@ -200,6 +216,45 @@ void SettingsDialog::createTabControls(HWND hWnd) {
     SendMessage(hBtnAdd, WM_SETFONT, (WPARAM)hFont, TRUE);
     HWND hBtnDel = CreateWindowExW(0, L"BUTTON", L"Xóa", WS_CHILD, 425, 300, 45, 24, hWnd, (HMENU)ID_BTN_MACRO_DEL, m_hInstance, NULL);
     SendMessage(hBtnDel, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+    // --- Tab 3: About ---
+    HWND hGrpAbout = CreateWindowExW(0, L"BUTTON", L"Thông tin phần mềm", WS_CHILD | BS_GROUPBOX, 30, 50, 445, 345, hWnd, (HMENU)ID_GRP_ABOUT, m_hInstance, NULL);
+    SendMessage(hGrpAbout, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+    if (!m_hTitleFont) {
+        m_hTitleFont = CreateFontW(
+            -18, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
+            DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
+            CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Segoe UI"
+        );
+    }
+
+    HWND hTxtTitle = CreateWindowExW(0, L"STATIC", L"MoriKey cho Windows", WS_CHILD | SS_LEFT, 50, 80, 400, 24, hWnd, (HMENU)ID_TXT_ABOUT_TITLE, m_hInstance, NULL);
+    SendMessage(hTxtTitle, WM_SETFONT, (WPARAM)m_hTitleFont, TRUE);
+
+    HWND hTxtVer = CreateWindowExW(0, L"STATIC", L"Phiên bản: 1.0.0 (Native C++17 / Win32 API thuần)", WS_CHILD | SS_LEFT, 50, 115, 400, 20, hWnd, (HMENU)ID_TXT_ABOUT_VER, m_hInstance, NULL);
+    SendMessage(hTxtVer, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+    HWND hTxtAuthor = CreateWindowExW(0, L"STATIC", L"Tác giả: Bùi Văn Lợi", WS_CHILD | SS_LEFT, 50, 140, 400, 20, hWnd, (HMENU)ID_TXT_ABOUT_AUTHOR, m_hInstance, NULL);
+    SendMessage(hTxtAuthor, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+    HWND hTxtAddr = CreateWindowExW(0, L"STATIC", L"Địa chỉ: Kim Bôi - Hòa Bình", WS_CHILD | SS_LEFT, 50, 165, 400, 20, hWnd, (HMENU)ID_TXT_ABOUT_ADDR, m_hInstance, NULL);
+    SendMessage(hTxtAddr, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+    HWND hTxtEmail = CreateWindowExW(0, L"STATIC", L"Email: buihuytran.com@gmail.com", WS_CHILD | SS_LEFT, 50, 190, 400, 20, hWnd, (HMENU)ID_TXT_ABOUT_EMAIL, m_hInstance, NULL);
+    SendMessage(hTxtEmail, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+    HWND hTxtGithub = CreateWindowExW(0, L"STATIC", L"GitHub: https://github.com/buihuytran", WS_CHILD | SS_LEFT, 50, 215, 400, 20, hWnd, (HMENU)ID_TXT_ABOUT_GITHUB, m_hInstance, NULL);
+    SendMessage(hTxtGithub, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+    HWND hTxtDesc = CreateWindowExW(0, L"STATIC", L"Bộ gõ tiếng Việt siêu nhẹ, độc lập, không cần runtime.", WS_CHILD | SS_LEFT, 50, 250, 400, 20, hWnd, (HMENU)ID_TXT_ABOUT_DESC, m_hInstance, NULL);
+    SendMessage(hTxtDesc, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+    HWND hTxtMethods = CreateWindowExW(0, L"STATIC", L"Hỗ trợ: Telex, Simple Telex, VNI, VIQR.", WS_CHILD | SS_LEFT, 50, 275, 400, 20, hWnd, (HMENU)ID_TXT_ABOUT_METHODS, m_hInstance, NULL);
+    SendMessage(hTxtMethods, WM_SETFONT, (WPARAM)hFont, TRUE);
+
+    HWND hTxtFeat = CreateWindowExW(0, L"STATIC", L"Tính năng: Khôi phục tiếng Anh thông minh, Macro gõ tắt.", WS_CHILD | SS_LEFT, 50, 300, 400, 20, hWnd, (HMENU)ID_TXT_ABOUT_FEATURES, m_hInstance, NULL);
+    SendMessage(hTxtFeat, WM_SETFONT, (WPARAM)hFont, TRUE);
 }
 
 void SettingsDialog::updateTabVisibility(int tabIndex) {
@@ -211,10 +266,17 @@ void SettingsDialog::updateTabVisibility(int tabIndex) {
     static const int tab1Ids[] = { ID_RAD_TELEX, ID_RAD_STELEX, ID_RAD_VNI, ID_RAD_VIQR, ID_RAD_TONE_MODERN, ID_RAD_TONE_CLASSIC, ID_CHK_SPELLING, ID_CHK_W_START, ID_CHK_FIX_BROWSER };
     // Tab 2 IDs
     static const int tab2Ids[] = { ID_CHK_MACRO_ENABLED, ID_LIST_MACROS, ID_EDT_SHORTCUT, ID_EDT_REPLACEMENT, ID_BTN_MACRO_ADD, ID_BTN_MACRO_DEL };
+    // Tab 3 IDs
+    static const int tab3Ids[] = {
+        ID_GRP_ABOUT, ID_TXT_ABOUT_TITLE, ID_TXT_ABOUT_VER, ID_TXT_ABOUT_AUTHOR,
+        ID_TXT_ABOUT_ADDR, ID_TXT_ABOUT_EMAIL, ID_TXT_ABOUT_GITHUB,
+        ID_TXT_ABOUT_DESC, ID_TXT_ABOUT_METHODS, ID_TXT_ABOUT_FEATURES
+    };
 
     for (int id : tab0Ids) ShowWindow(GetDlgItem(m_hWnd, id), (tabIndex == 0) ? SW_SHOW : SW_HIDE);
     for (int id : tab1Ids) ShowWindow(GetDlgItem(m_hWnd, id), (tabIndex == 1) ? SW_SHOW : SW_HIDE);
     for (int id : tab2Ids) ShowWindow(GetDlgItem(m_hWnd, id), (tabIndex == 2) ? SW_SHOW : SW_HIDE);
+    for (int id : tab3Ids) ShowWindow(GetDlgItem(m_hWnd, id), (tabIndex == 3) ? SW_SHOW : SW_HIDE);
 
     InvalidateRect(m_hWnd, NULL, TRUE);
 }
@@ -328,38 +390,10 @@ LRESULT SettingsDialog::handleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM
         break;
     }
 
-    case WM_PAINT: {
-        PAINTSTRUCT ps;
-        HDC hdc = BeginPaint(hWnd, &ps);
-        if (m_currentTab == 3) { // About Tab
-            SetBkMode(hdc, TRANSPARENT);
-            HFONT hTitleFont = CreateFontW(
-                -20, 0, 0, 0, FW_BOLD, FALSE, FALSE, FALSE,
-                DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, CLIP_DEFAULT_PRECIS,
-                CLEARTYPE_QUALITY, DEFAULT_PITCH | FF_SWISS, L"Segoe UI"
-            );
-            HFONT hOldFont = (HFONT)SelectObject(hdc, hTitleFont);
-            const wchar_t* title = L"MoriKey cho Windows";
-            TextOutW(hdc, 50, 55, title, (int)wcslen(title));
-
-            SelectObject(hdc, (HFONT)GetStockObject(DEFAULT_GUI_FONT));
-            DeleteObject(hTitleFont);
-
-            auto drawLine = [&](int x, int y, const wchar_t* text) {
-                TextOutW(hdc, x, y, text, (int)wcslen(text));
-            };
-
-            drawLine(50, 90,  L"Phiên bản: 1.0.0 (Native C++ Win32 API)");
-            drawLine(50, 115, L"Tác giả: Bùi Văn Lợi");
-            drawLine(50, 140, L"Địa chỉ: Kim Bôi - Hòa Bình");
-            drawLine(50, 165, L"Email: buihuytran.com@gmail.com");
-            drawLine(50, 190, L"GitHub: https://github.com/buihuytran");
-            drawLine(50, 220, L"Bộ gõ tiếng Việt siêu nhẹ, độc lập, không cần runtime.");
-            drawLine(50, 245, L"Hỗ trợ: Telex, Simple Telex, VNI, VIQR.");
-            drawLine(50, 270, L"Tính năng: Khôi phục tiếng Anh thông minh, Macro gõ tắt.");
-        }
-        EndPaint(hWnd, &ps);
-        break;
+    case WM_CTLCOLORSTATIC: {
+        HDC hdcStatic = (HDC)wParam;
+        SetBkMode(hdcStatic, TRANSPARENT);
+        return (LRESULT)GetStockObject(NULL_BRUSH);
     }
 
     case WM_CLOSE:

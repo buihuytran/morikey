@@ -16,6 +16,22 @@
 
 ---
 
+## ⚖️ Bảng so sánh ưu điểm MoriKey so với các bộ gõ Windows khác
+
+| Tiêu chí | **MoriKey (C++ Win32)** 🇻🇳 | **UniKey** | **EVKey** | **OpenKey** |
+| :--- | :---: | :---: | :---: | :---: |
+| **Mã nguồn & An toàn dữ liệu** | **100% Open Source** (Minh bạch) | Mã nguồn cũ | Đóng mã nguồn (Closed) | Mã nguồn mở |
+| **Dung lượng file `.exe`** | **~1.1 MB** (Siêu nhẹ) | ~1 MB | ~1.5 MB | ~2.5 MB |
+| **Yêu cầu cài Runtime (.NET/VC++)** | ❌ **Không cần** (Chạy ngay) | ❌ Không cần | ❌ Không cần | ❌ Không cần |
+| **Sửa lỗi thanh URL trình duyệt** (Chrome, Edge...) | ✅ **Cực tốt** (Xóa selection tự động) | ❌ Thường xuyên nuốt/lặp ký tự | ⚠️ Khá (dùng hook can thiệp) | ⚠️ Tùy ứng dụng |
+| **Tự động khôi phục từ Tiếng Anh** | ✅ **Có** (Từ điển & phân tích âm học) | ❌ Không có | ⚠️ Cơ bản | ⚠️ Cơ bản |
+| **Kiểu gõ Simple Telex (giữ `w` đầu từ)** | ✅ **Có** (`web`, `wifi`, `win`...) | ❌ Không có | ❌ Không có | ⚠️ Phải bật phím tắt |
+| **Hỗ trợ đầy đủ 4 kiểu gõ** (Telex, STelex, VNI, VIQR) | ✅ **Đầy đủ** | ⚠️ Thiếu Simple Telex | ⚠️ Thiếu Simple Telex | ✅ Đầy đủ |
+| **Gõ tắt linh hoạt (Macro)** | ✅ **Có** (Giữ nguyên hoa/thường) | ✅ Có | ✅ Có | ✅ Có |
+| **Phím tắt toàn hệ thống đa dạng** | ✅ `Ctrl+Space`, `Alt+Z`, `Ctrl+Shift` | `Ctrl+Shift`, `Alt+Z` | `Ctrl+Shift`, `Alt+Z` | `Ctrl+Shift`, `Alt+Z` |
+
+---
+
 ## 🏗️ Cấu trúc thư mục MoriKey Windows
 
 ```text

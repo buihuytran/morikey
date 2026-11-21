@@ -18,6 +18,40 @@
 
 ---
 
+## ⚖️ Bảng so sánh ưu điểm vượt trội với các phần mềm trên thị trường
+
+### 1. Trên hệ điều hành Windows
+
+| Tiêu chí | **MoriKey (C++ Win32)** 🇻🇳 | **UniKey** | **EVKey** | **OpenKey** |
+| :--- | :---: | :---: | :---: | :---: |
+| **Mã nguồn & An toàn dữ liệu** | **100% Open Source** (Minh bạch) | Mã nguồn cũ | Đóng mã nguồn (Closed) | Mã nguồn mở |
+| **Dung lượng file `.exe`** | **~1.1 MB** (Siêu nhẹ) | ~1 MB | ~1.5 MB | ~2.5 MB |
+| **Yêu cầu cài Runtime** | ❌ **Không cần** (Chạy ngay) | ❌ Không cần | ❌ Không cần | ❌ Không cần |
+| **Sửa lỗi thanh URL trình duyệt** (Chrome, Edge...) | ✅ **Cực tốt** (Xóa selection tự động) | ❌ Thường xuyên nuốt/lặp ký tự | ⚠️ Khá (dùng hook can thiệp) | ⚠️ Tùy ứng dụng |
+| **Tự động khôi phục từ Tiếng Anh** | ✅ **Có** (Từ điển & phân tích âm học) | ❌ Không có | ⚠️ Cơ bản | ⚠️ Cơ bản |
+| **Kiểu gõ Simple Telex (giữ `w` đầu từ)** | ✅ **Có** (`web`, `wifi`, `win`...) | ❌ Không có | ❌ Không có | ⚠️ Phải bật phím tắt |
+| **Hỗ trợ đầy đủ 4 kiểu gõ** (Telex, STelex, VNI, VIQR) | ✅ **Đầy đủ** | ⚠️ Thiếu Simple Telex | ⚠️ Thiếu Simple Telex | ✅ Đầy đủ |
+| **Gõ tắt linh hoạt (Macro)** | ✅ **Có** (Giữ nguyên hoa/thường) | ✅ Có | ✅ Có | ✅ Có |
+| **Phím tắt toàn hệ thống đa dạng** | ✅ `Ctrl+Space`, `Alt+Z`, `Ctrl+Shift` | `Ctrl+Shift`, `Alt+Z` | `Ctrl+Shift`, `Alt+Z` | `Ctrl+Shift`, `Alt+Z` |
+
+---
+
+### 2. Trên hệ điều hành macOS
+
+| Tiêu chí | **MoriKey (Swift/SwiftUI)** 🇻🇳 | **Bộ gõ mặc định macOS** | **EVKey Mac** | **OpenKey Mac** |
+| :--- | :---: | :---: | :---: | :---: |
+| **Công nghệ & Ngôn ngữ** | **100% Swift 6 + SwiftUI** | Hệ thống Apple (Input Method) | C/Objective-C cũ | C/Objective-C |
+| **Lỗi gạch chân / Lặp chữ (Docs, VS Code)** | ❌ **Hoàn toàn không bị** | ⚠️ Thường xuyên bị lỗi gạch chân | ❌ Không bị | ❌ Không bị |
+| **Lỗi nuốt ký tự trên thanh URL trình duyệt** | ✅ **Xử lý triệt để** (`forwardDelete`) | ❌ Hay dính chữ lặp (`iin`, `iín`) | ⚠️ Thi thoảng lag | ⚠️ Thi thoảng lag |
+| **Chế độ Simple Telex (giữ `w` đầu từ)** | ✅ **Có** (`web`, `word`, `win`...) | ❌ Không có | ❌ Không có | ⚠️ Cấu hình phức tạp |
+| **Dung lượng & Tiêu thụ tài nguyên** | **Cực nhẹ (~15MB RAM)** | Nhúng sâu vào hệ điều hành | ~25 - 35MB RAM | ~30 - 45MB RAM |
+| **Tương thích Apple Silicon (M1-M4) & Intel** | ✅ **Native Universal 100%** | ✅ Có sẵn | ⚠️ Universal qua build cũ | ⚠️ Universal qua build cũ |
+| **Minh bạch mã nguồn (Keylogger-free)** | ✅ **100% Open Source** | ❌ Đóng mã nguồn | ❌ Đóng mã nguồn | ✅ Mã nguồn mở |
+
+---
+
+---
+
 ## ✨ Tính năng nổi bật
 
 - ⚡️ **Native & Siêu nhẹ**: Viết thuần Swift 5.9+ / Swift 6, không dùng webview hay runtime cồng kềnh, tiêu tốn rất ít RAM và CPU.

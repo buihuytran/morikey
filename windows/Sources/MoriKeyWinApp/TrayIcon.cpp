@@ -224,6 +224,7 @@ void TrayIcon::showContextMenu(HWND hWnd) {
     case ID_TRAY_STARTUP:
         s.launchAtLogin = !s.launchAtLogin;
         s.setLaunchAtLogin(s.launchAtLogin);
+        s.save();
         break;
     case ID_TRAY_SETTINGS:
         if (m_onOpenSettings) m_onOpenSettings();

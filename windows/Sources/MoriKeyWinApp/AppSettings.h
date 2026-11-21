@@ -24,7 +24,7 @@ public:
     bool fixBrowserSuggestions = true;
     bool isMacroEnabled = false;
     ShortcutOption shortcutOption = ShortcutOption::CtrlSpace;
-    bool launchAtLogin = false;
+    bool launchAtLogin = true;
     std::vector<MacroItem> macroItems;
 
     void load();

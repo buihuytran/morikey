@@ -16,8 +16,27 @@ AppSettings::AppSettings() {
 }
 
 void AppSettings::load() {
+    HKEY hKey;
+    bool hasConfigured = false;
+    if (RegOpenKeyExW(HKEY_CURRENT_USER, REG_KEY_MORIKEY, 0, KEY_READ, &hKey) == ERROR_SUCCESS) {
+        DWORD dwVal = 0, dwSz = sizeof(DWORD);
+        if (RegQueryValueExW(hKey, L"ConfiguredStartup", NULL, NULL, (LPBYTE)&dwVal, &dwSz) == ERROR_SUCCESS) {
+            hasConfigured = (dwVal != 0);
+        }
+        RegCloseKey(hKey);
+    }
+
     loadFromRegistry();
-    launchAtLogin = checkLaunchAtLogin();
+
+    if (!hasConfigured) {
+        // First run on Windows: default launchAtLogin to true and register to Run
+        launchAtLogin = true;
+        setLaunchAtLogin(true);
+        save();
+    } else {
+        launchAtLogin = checkLaunchAtLogin();
+    }
+
     loadMacros();
 }
 
@@ -88,6 +107,9 @@ void AppSettings::saveToRegistry() {
 
         dwValue = static_cast<DWORD>(shortcutOption);
         RegSetValueExW(hKey, L"ShortcutOption", 0, REG_DWORD, (const BYTE*)&dwValue, sizeof(DWORD));
+
+        DWORD dwConfigured = 1;
+        RegSetValueExW(hKey, L"ConfiguredStartup", 0, REG_DWORD, (const BYTE*)&dwConfigured, sizeof(DWORD));
 
         RegCloseKey(hKey);
     }

@@ -22,6 +22,7 @@ public final class AppSettings: ObservableObject {
         static let isMacroEnabled = "mori_macro_enabled"
         static let macroItems = "mori_macro_items_json"
         static let shortcutOption = "mori_shortcut_option"
+        static let hasConfiguredStartup = "mori_has_configured_startup"
     }
 
     @Published public var isEnabled: Bool {
@@ -88,6 +89,7 @@ public final class AppSettings: ObservableObject {
 
     @Published public var launchAtLogin: Bool {
         didSet {
+            UserDefaults.standard.set(true, forKey: Keys.hasConfiguredStartup)
             LaunchAtLoginHelper.isEnabled = launchAtLogin
         }
     }
@@ -113,7 +115,15 @@ public final class AppSettings: ObservableObject {
         self.fixBrowserSuggestions = fixBrowser
         self.isMacroEnabled = macroOn
         self.shortcutOption = shortcut
-        self.launchAtLogin = LaunchAtLoginHelper.isEnabled
+
+        let hasConfigured = UserDefaults.standard.bool(forKey: Keys.hasConfiguredStartup)
+        if !hasConfigured {
+            LaunchAtLoginHelper.isEnabled = true
+            UserDefaults.standard.set(true, forKey: Keys.hasConfiguredStartup)
+            self.launchAtLogin = true
+        } else {
+            self.launchAtLogin = LaunchAtLoginHelper.isEnabled
+        }
 
         // Load Macro Items from UserDefaults (empty by default to avoid unexpected expansions like 'vn' -> 'Việt Nam')
         if let data = UserDefaults.standard.data(forKey: Keys.macroItems),

@@ -20,22 +20,24 @@ public final class AccessibilityHelper {
     }
 
     public static var isFrontmostAppBrowser: Bool {
-        guard let bundleId = NSWorkspace.shared.frontmostApplication?.bundleIdentifier?.lowercased() else {
-            return false
+        // 1. Check if Spotlight is active:
+        if let spotlight = NSWorkspace.shared.runningApplications.first(where: {
+            ($0.bundleIdentifier ?? "").lowercased().contains("spotlight")
+        }), spotlight.isActive {
+            return true
         }
-        let browserIdentifiers = [
-            "com.apple.safari",
-            "com.google.chrome",
-            "com.microsoft.edgemac",
-            "company.thebrowser.browser",
-            "com.brave.browser",
-            "org.mozilla.firefox",
-            "com.operasoftware.opera",
-            "com.coccoc.coccoc",
-            "org.chromium.chromium",
-            "com.vivaldi.vivaldi"
+
+        guard let bundleId = NSWorkspace.shared.frontmostApplication?.bundleIdentifier?.lowercased() else {
+            // When Spotlight / system search is active, frontmostApplication can be nil
+            return true
+        }
+
+        let autocompleteIdentifiers = [
+            "safari", "chrome", "edge", "browser", "brave", "firefox", "opera",
+            "coccoc", "chromium", "vivaldi", "spotlight", "search", "store",
+            "finder", "alfred", "raycast", "launcher"
         ]
-        for id in browserIdentifiers {
+        for id in autocompleteIdentifiers {
             if bundleId.contains(id) {
                 return true
             }

@@ -33,7 +33,9 @@ static bool isForegroundBrowser() {
                     wcsstr(exePath, L"opera.exe") ||
                     wcsstr(exePath, L"vivaldi.exe") ||
                     wcsstr(exePath, L"browser.exe") ||
-                    wcsstr(exePath, L"firefox.exe")) {
+                    wcsstr(exePath, L"firefox.exe") ||
+                    wcsstr(exePath, L"searchhost.exe") ||
+                    wcsstr(exePath, L"searchapp.exe")) {
                     CloseHandle(hProcess);
                     return true;
                 }

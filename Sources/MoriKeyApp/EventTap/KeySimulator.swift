@@ -23,9 +23,13 @@ public final class KeySimulator {
                 delUp.setIntegerValueField(.eventSourceUserData, value: moriEventTag)
                 delUp.post(tap: .cghidEventTap)
             }
+            usleep(1500)
         }
 
         sendBackspaces(count: deleteCount)
+        if fixBrowserAutocomplete {
+            usleep(1000)
+        }
         sendString(text)
     }
 
@@ -43,6 +47,7 @@ public final class KeySimulator {
                 keyUp.setIntegerValueField(.eventSourceUserData, value: moriEventTag)
                 keyUp.post(tap: .cghidEventTap)
             }
+            usleep(500)
         }
     }
 

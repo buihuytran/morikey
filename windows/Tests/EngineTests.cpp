@@ -281,6 +281,26 @@ public:
         ASSERT_EQUAL(type(L"sown"), L"sơn");
         ASSERT_EQUAL(type(L"hown"), L"hơn");
         ASSERT_EQUAL(type(L"ddown"), L"đơn");
+        ASSERT_EQUAL(typeSentence(L"mootj too phowr "), L"một tô phở ");
+        ASSERT_EQUAL(typeSentence(L"owr been nhau "), L"ở bên nhau ");
+        ASSERT_EQUAL(typeSentence(L"cos there dduowcj "), L"có thể được ");
+        ASSERT_EQUAL(typeSentence(L"nhuw these naof "), L"như thế nào ");
+        ASSERT_EQUAL(typeSentence(L"chowf mootj last "), L"chờ một lát ");
+        ASSERT_EQUAL(typeSentence(L"teen lost laf "), L"tên lót là ");
+        ASSERT_EQUAL(typeSentence(L"rust tieenf "), L"rút tiền ");
+        ASSERT_EQUAL(typeSentence(L"chim host "), L"chim hót ");
+        ASSERT_EQUAL(typeSentence(L"mootj list nuowsc "), L"một lít nước ");
+        ASSERT_EQUAL(typeSentence(L"chieecs now xinh "), L"chiếc nơ xinh ");
+        ASSERT_EQUAL(typeSentence(L"say best nhef "), L"say bét nhè ");
+        ASSERT_EQUAL(typeSentence(L"most khoai "), L"mót khoai ");
+        ASSERT_EQUAL(typeSentence(L"cost keetj "), L"cót kệt ");
+        ASSERT_EQUAL(typeSentence(L"how tay "), L"hơ tay ");
+        ASSERT_EQUAL(typeSentence(L"bans sir "), L"bán sỉ ");
+        ASSERT_EQUAL(typeSentence(L"cas tree "), L"cá trê ");
+        ASSERT_EQUAL(typeSentence(L"vufng hero "), L"vùng hẻo ");
+        ASSERT_EQUAL(typeSentence(L"nooir room sayr "), L"nổi rôm sảy ");
+        ASSERT_EQUAL(typeSentence(L"roost cuoocj "), L"rốt cuộc ");
+        ASSERT_EQUAL(typeSentence(L"arm ddajm "), L"ảm đạm ");
 
         ASSERT_EQUAL(type(L"its"), L"ít");
         ASSERT_EQUAL(type(L"ist"), L"ít");

@@ -181,7 +181,10 @@ public struct SpellingChecker {
     private static let protectedVietnameseWords: Set<String> = [
         "ít", "cả", "cơ", "bơ", "tơ", "lơ", "mã", "sĩ", "bả", "há", "hí", "hát",
         "toán", "toản", "chúc", "tiếp", "đường", "buổi", "sáng", "mừng", "việt", "tiếng",
-        "ơn", "cơn", "sơn", "hơn", "đơn", "rơm"
+        "ơn", "cơn", "sơn", "hơn", "đơn", "rơm",
+        "tô", "bên", "thể", "thế", "lát", "lót", "rút", "bét", "mót", "cót", "hót",
+        "lít", "nơ", "hơ", "sỉ", "trê", "rốt", "rôm", "ảm", "hẻ", "hẻo", "dóc",
+        "dơn", "lẹt", "líp", "lốp", "sên", "sêm", "mỏn", "bốt", "dổ"
     ]
 
     public static func isProtectedVietnameseWord(_ word: String) -> Bool {
